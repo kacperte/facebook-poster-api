@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    hostname: db-bot
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5433:5433"
+    restart: always
+
+  bot:
+    image: facebook-poster
+    depends_on:
+      - db
+    volumes:
+      - ./app:/code/app
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_KEY=${ACCESS_KEY}
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    ports:
+      - "8000:8000"
+
+
+
