@@ -21,11 +21,22 @@ def get_all_user(db: Session):
     return db.query(DbUser).all()
 
 
-def get_user(db: Session, id: str):
-    user = db.query(DbUser).filter(DbUser.email == id).first()
+def get_user(db: Session, mail: str):
+    user = db.query(DbUser).filter(DbUser.email == mail).first()
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {id} not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {mail} not found",
+        )
+    return user
+
+
+def get_user_by_name(db: Session, username: str):
+    user = db.query(DbUser).filter(DbUser.username == username).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {username} not found",
         )
     return user
 

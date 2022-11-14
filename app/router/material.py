@@ -28,7 +28,7 @@ def upload_file_to_s3_fastapi(bucket, file, client, position, type_of_file):
     try:
         contents = file.file.read()
         with temp as f:
-            f.write(contents);
+            f.write(contents)
     except Exception as e:
         return {"message": f"There was an error uploading the file - {e}"}
     finally:
@@ -37,8 +37,8 @@ def upload_file_to_s3_fastapi(bucket, file, client, position, type_of_file):
     # upload to s3 section
     s3 = boto3.client(
         "s3",
-        aws_access_key_id=os.getenv('ACCESS_KEY'),
-        aws_secret_access_key=os.getenv('SECRET_KEY'),
+        aws_access_key_id=os.getenv("ACCESS_KEY"),
+        aws_secret_access_key=os.getenv("SECRET_KEY"),
     )
     with open(temp.name, "rb") as data:
         s3.upload_fileobj(data, bucket, upload_path)
@@ -106,7 +106,7 @@ def get_one_materials(id: int, db: Session = Depends(get_db)):
     path="/client/{client}",
     summary="Read one material by client name",
     description="This API call function that read one material.",
-    response_model=List[MaterialDisplay]
+    response_model=List[MaterialDisplay],
 )
 def get_materials_by_client(client: str, db: Session = Depends(get_db)):
     return db_material.get_all_materials_by_client(db, client)
@@ -118,13 +118,14 @@ def get_materials_by_client(client: str, db: Session = Depends(get_db)):
     description="This API call function that update material.",
 )
 def update_material(
-        id: int,
-        client: str,
-        position: str,
-        creator_id: int,
-        image: UploadFile = File(...),
-        text_content: UploadFile = File(...),
-        db: Session = Depends(get_db)):
+    id: int,
+    client: str,
+    position: str,
+    creator_id: int,
+    image: UploadFile = File(...),
+    text_content: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
     newMaterial = MaterialBase(
         client=client,
         position=position,
@@ -157,4 +158,3 @@ def delete_user(
     db: Session = Depends(get_db),
 ):
     return db_material.delete_material(db, id)
-
