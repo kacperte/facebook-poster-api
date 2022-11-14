@@ -54,3 +54,12 @@ class MaterialDisplay(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Groups(BaseModel):
+    id: int
+    groups_name: str
+    groups: str
+
+    class Config:
+        orm_mode = True
