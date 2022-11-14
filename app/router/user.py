@@ -31,8 +31,7 @@ def create_user(
     response_model=List[UserDisplay],
 )
 def get_all_user(
-    db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
 ):
     return db_user.get_all_user(db)
 
