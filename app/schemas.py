@@ -56,7 +56,12 @@ class MaterialDisplay(BaseModel):
         orm_mode = True
 
 
-class Groups(BaseModel):
+class GroupsBase(BaseModel):
+    groups_name: str
+    groups: str
+
+
+class GroupsDispaly(BaseModel):
     id: int
     groups_name: str
     groups: str
