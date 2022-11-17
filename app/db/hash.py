@@ -1,11 +1,21 @@
-from passlib.context import CryptContext
+from cryptography.fernet import Fernet
 
-pwd_cxt = CryptContext(schemes="bcrypt", deprecated="auto")
+
+f_key: bytes = b'-mMdnutdSi2gfGM0lio-jugM-OlwOazVNufKIBZUGq0='
 
 
 class Hash:
     def bcrypt(password: str):
-        return pwd_cxt.hash(password)
+        fernet = Fernet(f_key)
+        return fernet.encrypt(password.encode())
 
-    def verify(hashed_passwrod, plain_password):
-        return pwd_cxt.verify(plain_password, hashed_passwrod)
+    def verify(hashed_passwrod: bytes, plain_password):
+        fernet = Fernet(f_key)
+        if fernet.decrypt(hashed_passwrod).decode() == plain_password:
+            return True
+        else:
+            return False
+
+    def uncrypt(hashed_passwrod: bytes):
+        fernet = Fernet(f_key)
+        return fernet.decrypt(hashed_passwrod).decode()

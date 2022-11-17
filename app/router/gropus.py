@@ -1,11 +1,12 @@
 import csv
 from fastapi import APIRouter, Depends, UploadFile, File
-from app.schemas import GroupsBase, GroupsDispaly
+from app.schemas import GroupsBase, GroupsDispaly, UserBase
 from typing import List
 from sqlalchemy.orm.session import Session
 from app.db.database import get_db
 from app.db import db_groups
 from tempfile import NamedTemporaryFile
+from app.auth.oauth2 import get_current_user
 
 
 router = APIRouter(prefix="/gropus", tags=["gropus"])
@@ -40,7 +41,8 @@ def process_csv_file(file):
 def create_group(
     groups_name: str,
     groups: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user)
 ):
     newGroup = GroupsBase(
         groups_name=groups_name,
@@ -56,7 +58,7 @@ def create_group(
     description="This API call function that read all FB groups.",
     response_model=List[GroupsDispaly],
 )
-def get_all_groups(db: Session = Depends(get_db)):
+def get_all_groups(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     return db_groups.get_all_groups(db)
 
 
@@ -66,7 +68,7 @@ def get_all_groups(db: Session = Depends(get_db)):
     description="This API call function that read FB group by group name.",
     response_model=GroupsDispaly,
 )
-def get_group_by_name(groups_name: str, db: Session = Depends(get_db)):
+def get_group_by_name(groups_name: str, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     return db_groups.get_group_by_group_name(db, groups_name)
 
 
@@ -79,7 +81,8 @@ def update_group(
     id: int,
     groups_name: str,
     groups: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user)
 ):
     newGroup = GroupsBase(
         groups_name=groups_name,
@@ -97,5 +100,6 @@ def update_group(
 def delete_group(
     groups_name: str,
     db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user)
 ):
     return db_groups.delete_groups(db, groups_name)

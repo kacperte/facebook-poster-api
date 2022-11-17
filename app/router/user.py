@@ -6,7 +6,6 @@ from app.db import db_user
 from typing import List
 from app.auth.oauth2 import get_current_user
 
-
 router = APIRouter(prefix="/user", tags=["user"])
 
 
@@ -17,9 +16,9 @@ router = APIRouter(prefix="/user", tags=["user"])
     response_model=UserDisplay,
 )
 def create_user(
-    request: UserBase,
-    db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user),
+        request: UserBase,
+        db: Session = Depends(get_db),
+        #  current_user: UserBase = Depends(get_current_user),
 ):
     return db_user.create_user(db, request)
 
@@ -31,7 +30,7 @@ def create_user(
     response_model=List[UserDisplay],
 )
 def get_all_user(
-    db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
+        db: Session = Depends(get_db)  # , current_user: UserBase = Depends(get_current_user)
 ):
     return db_user.get_all_user(db)
 
@@ -43,9 +42,9 @@ def get_all_user(
     response_model=UserDisplay,
 )
 def get_one_user(
-    mail: str,
-    db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user),
+        mail: str,
+        db: Session = Depends(get_db),
+        current_user: UserBase = Depends(get_current_user),
 ):
     return db_user.get_user(db, mail)
 
@@ -56,10 +55,10 @@ def get_one_user(
     description="This API call function that update user.",
 )
 def update_user(
-    mail: str,
-    request: UserBase,
-    db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user),
+        mail: str,
+        request: UserBase,
+        db: Session = Depends(get_db),
+        current_user: UserBase = Depends(get_current_user),
 ):
     return db_user.update_user(db, mail, request)
 
@@ -70,8 +69,8 @@ def update_user(
     description="This API call function that delete user.",
 )
 def delete_user(
-    mail: str,
-    db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user),
+        mail: str,
+        db: Session = Depends(get_db),
+        current_user: UserBase = Depends(get_current_user),
 ):
     return db_user.delete_user(db, mail)

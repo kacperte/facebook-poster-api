@@ -1,12 +1,13 @@
 import boto3
 import os
 from fastapi import APIRouter, Depends, UploadFile, File
-from app.schemas import MaterialBase, MaterialDisplay
+from app.schemas import MaterialBase, MaterialDisplay, UserBase
 from sqlalchemy.orm.session import Session
 from app.db.database import get_db
 from app.db import db_material
 from typing import List
 from tempfile import NamedTemporaryFile
+from app.auth.oauth2 import get_current_user
 
 
 router = APIRouter(prefix="/material", tags=["material"])
@@ -59,6 +60,7 @@ def create_material(
     db: Session = Depends(get_db),
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
+    current_user: UserBase = Depends(get_current_user)
 ):
     newMaterial = MaterialBase(
         client=client,
@@ -88,7 +90,7 @@ def create_material(
     description="This API call function that read all materials.",
     response_model=List[MaterialDisplay],
 )
-def get_all_materials(db: Session = Depends(get_db)):
+def get_all_materials(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     return db_material.get_all_materials(db)
 
 
@@ -98,7 +100,7 @@ def get_all_materials(db: Session = Depends(get_db)):
     description="This API call function that read one material.",
     response_model=MaterialDisplay,
 )
-def get_one_materials(id: int, db: Session = Depends(get_db)):
+def get_one_materials(id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     return db_material.get_material(db, id)
 
 
@@ -108,7 +110,7 @@ def get_one_materials(id: int, db: Session = Depends(get_db)):
     description="This API call function that read one material.",
     response_model=List[MaterialDisplay],
 )
-def get_materials_by_client(client: str, db: Session = Depends(get_db)):
+def get_materials_by_client(client: str, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     return db_material.get_all_materials_by_client(db, client)
 
 
@@ -125,6 +127,7 @@ def update_material(
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user)
 ):
     newMaterial = MaterialBase(
         client=client,
@@ -156,5 +159,6 @@ def update_material(
 def delete_user(
     id: int,
     db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user)
 ):
     return db_material.delete_material(db, id)

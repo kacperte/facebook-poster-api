@@ -1,5 +1,5 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, LargeBinary, String
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -9,7 +9,7 @@ class DbUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String)
     email = Column(String)
-    password = Column(String)
+    password = Column(LargeBinary)
     items = relationship("DbMaterial", back_populates="user")
 
 
