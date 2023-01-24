@@ -1,7 +1,7 @@
 from cryptography.fernet import Fernet
 
 
-f_key: bytes = b'-mMdnutdSi2gfGM0lio-jugM-OlwOazVNufKIBZUGq0='
+f_key: bytes = b"-mMdnutdSi2gfGM0lio-jugM-OlwOazVNufKIBZUGq0="
 
 
 class Hash:

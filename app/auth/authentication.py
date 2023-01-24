@@ -6,6 +6,7 @@ from app.db import models
 from app.db.hash import Hash
 from app.auth.oauth2 import create_access_token
 
+
 router = APIRouter(tags=["authentication"])
 
 

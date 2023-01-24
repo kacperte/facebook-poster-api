@@ -17,7 +17,7 @@ def create_user(db: Session, request: UserBase):
     return new_user
 
 
-def get_all_user(db: Session):
+def get_all_users(db: Session):
     return db.query(DbUser).all()
 
 

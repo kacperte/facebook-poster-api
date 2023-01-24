@@ -25,9 +25,9 @@ def process_csv_file(file):
         file.file.close()
 
     # get texts from csv and proces it to one str
-    with open(temp.name, 'r') as file:
-        reader = csv.reader(file, delimiter=',')
-        str_to_save = ','.join([row[0] for row in reader])
+    with open(temp.name, "r") as file:
+        reader = csv.reader(file, delimiter=",")
+        str_to_save = ",".join([row[0] for row in reader])
 
     return str_to_save
 
@@ -42,7 +42,7 @@ def create_group(
     groups_name: str,
     groups: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user)
+    current_user: UserBase = Depends(get_current_user),
 ):
     newGroup = GroupsBase(
         groups_name=groups_name,
@@ -53,12 +53,14 @@ def create_group(
 
 
 @router.get(
-    path='/',
+    path="/",
     summary="Read all groups",
     description="This API call function that read all FB groups.",
     response_model=List[GroupsDispaly],
 )
-def get_all_groups(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+def get_all_groups(
+    db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
+):
     return db_groups.get_all_groups(db)
 
 
@@ -68,7 +70,11 @@ def get_all_groups(db: Session = Depends(get_db), current_user: UserBase = Depen
     description="This API call function that read FB group by group name.",
     response_model=GroupsDispaly,
 )
-def get_group_by_name(groups_name: str, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+def get_group_by_name(
+    groups_name: str,
+    db: Session = Depends(get_db),
+    current_user: UserBase = Depends(get_current_user),
+):
     return db_groups.get_group_by_group_name(db, groups_name)
 
 
@@ -82,7 +88,7 @@ def update_group(
     groups_name: str,
     groups: UploadFile = File(...),
     db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user)
+    current_user: UserBase = Depends(get_current_user),
 ):
     newGroup = GroupsBase(
         groups_name=groups_name,
@@ -100,6 +106,6 @@ def update_group(
 def delete_group(
     groups_name: str,
     db: Session = Depends(get_db),
-    current_user: UserBase = Depends(get_current_user)
+    current_user: UserBase = Depends(get_current_user),
 ):
     return db_groups.delete_groups(db, groups_name)
