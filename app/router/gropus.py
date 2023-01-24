@@ -1,5 +1,5 @@
 import csv
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from app.schemas import GroupsBase, GroupsDispaly, UserBase
 from typing import List
 from sqlalchemy.orm.session import Session
@@ -20,15 +20,17 @@ def process_csv_file(file):
         with temp as f:
             f.write(contents)
     except Exception as e:
-        return {"message": f"There was an error uploading the file - {e}"}
+        raise HTTPException(status_code=500, detail=f"There was an error uploading the file - {e}")
     finally:
         file.file.close()
 
     # get texts from csv and proces it to one str
-    with open(temp.name, "r") as file:
-        reader = csv.reader(file, delimiter=",")
-        str_to_save = ",".join([row[0] for row in reader])
-
+    try:
+        with open(temp.name, "r") as file:
+            reader = csv.reader(file, delimiter=",")
+            str_to_save = ",".join([row[0] for row in reader])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"There was an error reading the CSV file - {e}")
     return str_to_save
 
 
