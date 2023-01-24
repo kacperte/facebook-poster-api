@@ -51,7 +51,10 @@ def create_group(
         groups=process_csv_file(groups),
     )
 
-    return db_groups.create_gropus(db, newGroup)
+    try:
+        return db_groups.create_gropus(db, newGroup)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error creating new group - {e}")
 
 
 @router.get(
