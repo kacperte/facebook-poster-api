@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.schemas import UserBase, UserDisplay
 from sqlalchemy.orm.session import Session
 from app.db.database import get_db
@@ -18,12 +18,15 @@ router = APIRouter(prefix="/user", tags=["user"])
 def create_user(
     request: UserBase,
     db: Session = Depends(get_db),
-    #  current_user: UserBase = Depends(get_current_user),
+    current_user: UserBase = Depends(get_current_user),
 ):
     """
     Create new user
     """
-    return db_user.create_user(db, request)
+    user = db_user.create_user(db, request)
+    if user is None:
+        raise HTTPException(status_code=400, detail="Error creating user.")
+    return user
 
 
 @router.get(
