@@ -71,7 +71,7 @@ def update_user(db: Session, id: str, request: UserBase):
         }
     )
     db.commit()
-    return "ok"
+    return user.first()
 
 
 def delete_user(db: Session, id: str):
@@ -86,4 +86,4 @@ def delete_user(db: Session, id: str):
         )
     db.delete(user)
     db.commit()
-    return "ok"
+    return user
