@@ -20,11 +20,9 @@ def create_user(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-    """
-    Create new user
-    """
     user = db_user.create_user(db, request)
-    if user is None:
+
+    if not user.id:
         raise HTTPException(status_code=400, detail="Error creating user.")
     return user
 
@@ -38,9 +36,6 @@ def create_user(
 def get_all_users(
     db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
 ):
-    """
-    Get all users
-    """
     return db_user.get_all_users(db)
 
 
@@ -55,9 +50,6 @@ def get_one_user(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-    """
-    Get one user by email
-    """
     return db_user.get_user(db, email)
 
 
@@ -85,7 +77,5 @@ def delete_user(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-    """
-    Delete user
-    """
+
     return db_user.delete_user(db, mail)

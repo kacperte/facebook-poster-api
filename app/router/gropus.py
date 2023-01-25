@@ -20,7 +20,9 @@ def process_csv_file(file):
         with temp as f:
             f.write(contents)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"There was an error uploading the file - {e}")
+        raise HTTPException(
+            status_code=500, detail=f"There was an error uploading the file - {e}"
+        )
     finally:
         file.file.close()
 
@@ -30,7 +32,9 @@ def process_csv_file(file):
             reader = csv.reader(file, delimiter=",")
             str_to_save = ",".join([row[0] for row in reader])
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"There was an error reading the CSV file - {e}")
+        raise HTTPException(
+            status_code=500, detail=f"There was an error reading the CSV file - {e}"
+        )
     return str_to_save
 
 
@@ -50,11 +54,10 @@ def create_group(
         groups_name=groups_name,
         groups=process_csv_file(groups),
     )
-
-    try:
-        return db_groups.create_gropus(db, newGroup)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creating new group - {e}")
+    groups = db_groups.create_gropus(db, newGroup)
+    if not groups.id:
+        raise HTTPException(status_code=400, detail="Error creating groups.")
+    return groups
 
 
 @router.get(
