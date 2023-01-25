@@ -5,6 +5,9 @@ from fastapi import HTTPException, status
 
 
 def create_material(db: Session, request: MaterialBase):
+    """
+    Creates new material in the database
+    """
     new_group_post = DbMaterial(
         client=request.client,
         position=request.position,
@@ -19,10 +22,16 @@ def create_material(db: Session, request: MaterialBase):
 
 
 def get_all_materials(db: Session):
+    """
+    Returns all materials from the database
+    """
     return db.query(DbMaterial).all()
 
 
 def get_material(db: Session, id: int):
+    """
+    Returns material by id
+    """
     group_post = db.query(DbMaterial).filter(DbMaterial.id == id).first()
     if not group_post:
         raise HTTPException(
@@ -33,6 +42,9 @@ def get_material(db: Session, id: int):
 
 
 def get_all_materials_by_client(db: Session, client: str):
+    """
+    Returns all materials by client
+    """
     materials = db.query(DbMaterial).filter(DbMaterial.client == client).all()
     if not materials:
         raise HTTPException(
@@ -43,6 +55,9 @@ def get_all_materials_by_client(db: Session, client: str):
 
 
 def update_material(db: Session, id: int, request: MaterialBase):
+    """
+    Updates material in the database
+    """
     group_post = db.query(DbMaterial).filter(DbMaterial.id == id)
     if not group_post.first():
         raise HTTPException(
@@ -62,6 +77,9 @@ def update_material(db: Session, id: int, request: MaterialBase):
 
 
 def delete_material(db: Session, id: int):
+    """
+    Deletes material from the database
+    """
     group_post = db.query(DbMaterial).filter(DbMaterial.id == id).first()
     if not group_post:
         raise HTTPException(
