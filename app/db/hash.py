@@ -1,21 +1,24 @@
 from cryptography.fernet import Fernet
 
-
+# Key for encrypting and decrypting passwords
 f_key: bytes = b"-mMdnutdSi2gfGM0lio-jugM-OlwOazVNufKIBZUGq0="
 
 
 class Hash:
-    def bcrypt(password: str):
+    # Encrypt a plaintext password
+    def encrypt_password(password: str):
         fernet = Fernet(f_key)
         return fernet.encrypt(password.encode())
 
-    def verify(hashed_passwrod: bytes, plain_password):
+    # Verify if the plaintext password matches the hashed password
+    def verify_password(hashed_password: bytes, plain_password):
         fernet = Fernet(f_key)
-        if fernet.decrypt(hashed_passwrod).decode() == plain_password:
+        if fernet.decrypt(hashed_password).decode() == plain_password:
             return True
         else:
             return False
 
-    def uncrypt(hashed_passwrod: bytes):
+    # Decrypt a hashed password
+    def decrypt_password(hashed_password: bytes):
         fernet = Fernet(f_key)
-        return fernet.decrypt(hashed_passwrod).decode()
+        return fernet.decrypt(hashed_password).decode()

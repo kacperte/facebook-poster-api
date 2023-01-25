@@ -9,7 +9,7 @@ def create_user(db: Session, request: UserBase):
     new_user = DbUser(
         username=request.username,
         email=request.email,
-        password=Hash.bcrypt(request.password),
+        password=Hash.encrypt_password(request.password),
     )
     db.add(new_user)
     db.commit()
@@ -52,7 +52,7 @@ def update_user(db: Session, id: str, request: UserBase):
         {
             DbUser.username: request.username,
             DbUser.email: request.email,
-            DbUser.password: Hash.bcrypt(request.password),
+            DbUser.password: Hash.encrypt_password(request.password),
         }
     )
     db.commit()
