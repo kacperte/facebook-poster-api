@@ -4,22 +4,31 @@ from app.db.models import DbGroups
 from fastapi import HTTPException, status
 
 
-def create_gropus(db: Session, request: GroupsBase):
-    new_grups = DbGroups(
+def create_groups(db: Session, request: GroupsBase):
+    """
+    Creates new groups in the database
+    """
+    new_groups = DbGroups(
         groups_name=request.groups_name,
         groups=request.groups,
     )
-    db.add(new_grups)
+    db.add(new_groups)
     db.commit()
-    db.refresh(new_grups)
-    return new_grups
+    db.refresh(new_groups)
+    return new_groups
 
 
 def get_all_groups(db: Session):
+    """
+    Returns all groups from database
+    """
     return db.query(DbGroups).all()
 
 
-def get_group_by_group_name(db: Session, groups_name: str):
+def get_groups_by_name(db: Session, groups_name: str):
+    """
+    Returns groups by name
+    """
     groups = db.query(DbGroups).filter(DbGroups.groups_name == groups_name).first()
     if not groups:
         raise HTTPException(
@@ -30,6 +39,9 @@ def get_group_by_group_name(db: Session, groups_name: str):
 
 
 def update_groups(db: Session, id: int, request: GroupsBase):
+    """
+    Updates groups in the database
+    """
     groups = db.query(DbGroups).filter(DbGroups.id == id)
     if not groups.first():
         raise HTTPException(
@@ -47,6 +59,9 @@ def update_groups(db: Session, id: int, request: GroupsBase):
 
 
 def delete_groups(db: Session, groups_name: str):
+    """
+    Deletes groups in the database
+    """
     groups = db.query(DbGroups).filter(DbGroups.groups_name == groups_name).first()
     if not groups:
         raise HTTPException(

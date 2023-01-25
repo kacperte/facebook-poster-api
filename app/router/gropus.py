@@ -54,7 +54,7 @@ def create_group(
         groups_name=groups_name,
         groups=process_csv_file(groups),
     )
-    groups = db_groups.create_gropus(db, newGroup)
+    groups = db_groups.create_groups(db, newGroup)
     if not groups.id:
         raise HTTPException(status_code=400, detail="Error creating groups.")
     return groups
@@ -83,7 +83,7 @@ def get_group_by_name(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-    return db_groups.get_group_by_group_name(db, groups_name)
+    return db_groups.get_groups_by_name(db, groups_name)
 
 
 @router.put(
