@@ -40,6 +40,19 @@ def get_user(db: Session, mail: str):
     return user
 
 
+def get_user_by_name(db: Session, username: str):
+    """
+    Get one user by username. Must for authentication.
+    """
+    user = db.query(DbUser).filter(DbUser.username == username).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {username} not found",
+        )
+    return user
+
+
 def update_user(db: Session, id: str, request: UserBase):
     """
     Update one  user

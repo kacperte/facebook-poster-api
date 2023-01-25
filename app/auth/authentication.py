@@ -23,7 +23,7 @@ def get_token(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentails"
         )
-    if not Hash.verify(user.password, request.password):
+    if not Hash.verify_password(user.password, request.password):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect password"
         )
