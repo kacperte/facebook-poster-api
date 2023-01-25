@@ -33,13 +33,13 @@ def get_material(db: Session, id: int):
 
 
 def get_all_materials_by_client(db: Session, client: str):
-    group_post = db.query(DbMaterial).filter(DbMaterial.client == client).all()
-    if not group_post:
+    materials = db.query(DbMaterial).filter(DbMaterial.client == client).all()
+    if not materials:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Group post with client name {client} not found",
+            detail=f"Materials from client {client} not found",
         )
-    return group_post
+    return materials
 
 
 def update_material(db: Session, id: int, request: MaterialBase):
@@ -58,7 +58,7 @@ def update_material(db: Session, id: int, request: MaterialBase):
         }
     )
     db.commit()
-    return "ok"
+    return group_post.first()
 
 
 def delete_material(db: Session, id: int):
@@ -70,4 +70,4 @@ def delete_material(db: Session, id: int):
         )
     db.delete(group_post)
     db.commit()
-    return "ok"
+    return group_post
