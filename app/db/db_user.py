@@ -6,6 +6,9 @@ from app.db.hash import Hash
 
 
 def create_user(db: Session, request: UserBase):
+    """
+    Create new user
+    """
     new_user = DbUser(
         username=request.username,
         email=request.email,
@@ -18,10 +21,16 @@ def create_user(db: Session, request: UserBase):
 
 
 def get_all_users(db: Session):
+    """
+    Get all users
+    """
     return db.query(DbUser).all()
 
 
 def get_user(db: Session, mail: str):
+    """
+    Get one user by email
+    """
     user = db.query(DbUser).filter(DbUser.email == mail).first()
     if not user:
         raise HTTPException(
@@ -31,17 +40,10 @@ def get_user(db: Session, mail: str):
     return user
 
 
-def get_user_by_name(db: Session, username: str):
-    user = db.query(DbUser).filter(DbUser.username == username).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with id {username} not found",
-        )
-    return user
-
-
 def update_user(db: Session, id: str, request: UserBase):
+    """
+    Update one  user
+    """
     user = db.query(DbUser).filter(DbUser.email == id)
     if not user.first():
         raise HTTPException(
@@ -60,6 +62,9 @@ def update_user(db: Session, id: str, request: UserBase):
 
 
 def delete_user(db: Session, id: str):
+    """
+    Delete one  user
+    """
     user = db.query(DbUser).filter(DbUser.email == id).first()
     if not user:
         raise HTTPException(
