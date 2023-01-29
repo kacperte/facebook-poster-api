@@ -24,7 +24,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """ Function for getting a database session """
+    """Function for getting a database session"""
     db = SessionLocal()
     try:
         yield db
