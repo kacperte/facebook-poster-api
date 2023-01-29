@@ -6,7 +6,7 @@ from app.db import db_user
 from typing import Optional
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from .config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
