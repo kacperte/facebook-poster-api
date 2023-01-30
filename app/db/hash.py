@@ -16,7 +16,9 @@ class Hash:
 
     def verify_password(self, hashed_password: bytes, plain_password: str) -> bool:
         if not (hashed_password and plain_password):
-            raise ValueError("encrypted_password and plain_password can not be empty or None")
+            raise ValueError(
+                "encrypted_password and plain_password can not be empty or None"
+            )
         try:
             decrypted_password = self.decrypt_password(hashed_password)
             if decrypted_password == plain_password:

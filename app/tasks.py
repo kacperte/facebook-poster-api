@@ -16,7 +16,7 @@ def facebook_poster(
 ):
 
     FacebookPoster(login=login, password=password).prepare_and_send_post(
-        txt_name="content/1.txt", bucket_name="heroku-fb-poster", img_name="copy/1.jpg"
+        txt_name="content/test__test.txt", bucket_name="heroku-fb-poster", img_name="test__test.jfif"
     )
 
     return {"message": "Success"}

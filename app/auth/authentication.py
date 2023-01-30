@@ -5,6 +5,9 @@ from app.db.database import get_db
 from app.db import models
 from app.db.hash import Hash
 from app.auth.oauth2 import create_access_token
+from app.config import SECRET_KEY_HASH
+
+secret_key = SECRET_KEY_HASH
 
 
 router = APIRouter(tags=["authentication"])
@@ -23,7 +26,11 @@ def get_token(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentails"
         )
-    if not Hash.verify_password(user.password, request.password):
+
+    hashed = Hash(secret_key)
+    if not hashed.verify_password(
+        hashed_password=user.password, plain_password=request.password
+    ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect password"
         )
