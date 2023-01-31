@@ -14,11 +14,11 @@ def send_content_to_fb_groups(
     password: str,
 ):
     groups_name = [
-        "https://www.facebook.com/groups/pracawlodzkim/",
-        "https://www.facebook.com/groups/1752579184959123/",
-        "https://www.facebook.com/groups/960366354163646/",
+        "https://www.facebook.com/groups/1281302162058634"
     ]
+
     facebook_poster(
         login=login,
         password=password,
+        groups=groups_name
     )

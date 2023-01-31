@@ -2,12 +2,14 @@ from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-import win32clipboard
+# import win32clipboard
 import boto3
 import time
 import re
@@ -24,10 +26,9 @@ class FacebookPoster:
     A class representing a bot for posting in groups on Facebook.
     """
 
-    def __init__(self, login: str, password: str, groups: list, image_path: str):
+    def __init__(self, login: str, password: str, groups: list):
         """
         Initializes the attributes of the class.
-        :param image_path: Path to image
         :param login: str Facebook login id credentials
         :param password: str Facebook login password credentials
         :param groups: list Facebook groups list
@@ -42,9 +43,6 @@ class FacebookPoster:
         # List with Facebook groups
         self.groups = groups
 
-        # Path to image
-        self.image_path = image_path
-
         # Facebook page url
         self.base_url = "https://www.facebook.com/"
 
@@ -52,16 +50,17 @@ class FacebookPoster:
         options = Options()
 
         # Add binary location for Firefox which is mandatory and headless mode on
-        options.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
+        # options.binary_location = '/usr/bin/firefox'
 
         # Add argument headless
         # options.add_argument("--headless")
 
         # Setup Firefox driver
-        self.driver = Firefox(
-            service=Service(GeckoDriverManager().install()), options=options
+        self.driver = webdriver.Remote(
+            command_executor='http://firefox:4444/wd/hub',
+            desired_capabilities=DesiredCapabilities.FIREFOX,
+            options=options
         )
-
         # Setup Selenium action chain
         self.action = ActionChains(self.driver)
 

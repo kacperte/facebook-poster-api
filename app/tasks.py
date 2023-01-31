@@ -13,10 +13,11 @@ app.conf.update(
 def facebook_poster(
     login: str,
     password: str,
+    groups: list
 ):
 
-    FacebookPoster(login=login, password=password).prepare_and_send_post(
-        txt_name="content/test__test.txt", bucket_name="heroku-fb-poster", img_name="test__test.jfif"
+    FacebookPoster(login=login, password=password, groups=groups).prepare_and_send_post(
+        txt_name="content/test__test.txt", img_name="test__test.jfif"
     )
 
     return {"message": "Success"}

@@ -11,10 +11,17 @@ services:
       - "5433:5433"
     restart: always
 
+  firefox:
+    image: selenium/standalone-firefox
+    ports:
+      - "4444:4444"
+    restart: always
+
   bot:
     image: facebook-poster
     depends_on:
       - db
+      - firefox
     volumes:
       - ./app:/code/app
     environment:
