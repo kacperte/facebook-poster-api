@@ -3,16 +3,20 @@ from app.schemas import UserBase
 from app.db.models import DbUser
 from fastapi import HTTPException, status
 from app.db.hash import Hash
+from app.config import SECRET_KEY_HASH
+
+secret_key = SECRET_KEY_HASH
 
 
 def create_user(db: Session, request: UserBase):
     """
     Create new user
     """
+    hashed = Hash(secret_key=secret_key)
     new_user = DbUser(
         username=request.username,
         email=request.email,
-        password=Hash.encrypt_password(request.password),
+        password=hashed.encrypt_password(request.password),
     )
     db.add(new_user)
     db.commit()

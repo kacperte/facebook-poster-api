@@ -1,7 +1,9 @@
-from selenium.webdriver import Firefox
+import os
+import time
+import re
+from random import randint, uniform
+from collections import namedtuple
 from selenium.webdriver.firefox.options import Options
-from webdriver_manager.firefox import GeckoDriverManager
-from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -9,13 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-# import win32clipboard
 import boto3
-import time
-import re
-from random import randint, uniform
-from collections import namedtuple
-import os
 
 # Prepare namedtuple
 Test_output = namedtuple("Test_output", ["selenium_element", "n_for_end_and_position"])
@@ -49,17 +45,16 @@ class FacebookPoster:
         # Setup Selenium Options
         options = Options()
 
-        # Add binary location for Firefox which is mandatory and headless mode on
-        # options.binary_location = '/usr/bin/firefox'
+        options.add_argument('--disable-blink-features=AutomationControlled')
 
         # Add argument headless
         # options.add_argument("--headless")
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
-            command_executor='http://firefox:4444/wd/hub',
+            command_executor="http://selenium-hub:4444/wd/hub",
             desired_capabilities=DesiredCapabilities.FIREFOX,
-            options=options
+            options=options,
         )
         # Setup Selenium action chain
         self.action = ActionChains(self.driver)
@@ -270,9 +265,10 @@ class FacebookPoster:
         selenium_element.send_keys(move_key)
 
         # Get copied characters from clipboard
-        win32clipboard.OpenClipboard()
-        copied_text = win32clipboard.GetClipboardData()
-        win32clipboard.CloseClipboard()
+        # win32clipboard.OpenClipboard()
+        # copied_text = win32clipboard.GetClipboardData()
+        copied_text = ""
+        # win32clipboard.CloseClipboard()
 
         # Calculate number of characters to move
         if direction == "position":
@@ -313,22 +309,22 @@ class FacebookPoster:
         self.driver.get(self.base_url)
 
         # Close cookie popup
-
-        cookie = WebDriverWait(self.driver, 10).until(
+        cookie = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH,
-                    "//button[text()='Zezwól na korzystanie z niezbędnych i opcjonalnych plików cookie']",
+                    "//button[@data-cookiebanner='accept_button']",
                 )
             )
         )
         cookie.click()
 
+        print("1")
         # For pausing the script for some time
         self._time_patterns()
 
         # Enter login and password
-        login = WebDriverWait(self.driver, 10).until(
+        login = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable((By.ID, "email"))
         )
         login.send_keys(self.login)
@@ -336,28 +332,33 @@ class FacebookPoster:
         # For pausing the script for some time
         self._time_patterns()
 
-        password = WebDriverWait(self.driver, 10).until(
+        password = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable((By.ID, "pass"))
         )
         password.send_keys(self.password)
 
         # For pausing the script for some time
         self._time_patterns()
-
+        print("2")
         # Click login button
-        login_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[text()='Zaloguj się']"))
+        login_button = WebDriverWait(self.driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@class='_42ft _4jy0 _6lth _4jy6 _4jy1 selected _51sy']"))
         )
-        login_button.click()
 
+        login_button.click()
+        print("3")
         # Load FB start page
-        WebDriverWait(self.driver, 15).until(
+        WebDriverWait(self.driver, 30).until(
             EC.presence_of_element_located((By.ID, "facebook"))
         )
+        print("4")
 
         # Scroll the feed by 3 units to simulate human-like behavior
         if human_simulation:
             self._scroll_feed(self.driver, 3)
+
+    # LOGIN_BETA = "random2022@hsswork.pl"
+    # PASSWORD_BETA = "Ewelina2022"
 
     def _time_patterns(self, tp=None):
         """

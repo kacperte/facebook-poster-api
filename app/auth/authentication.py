@@ -28,6 +28,9 @@ def get_token(
         )
 
     hashed = Hash(secret_key)
+    ####################
+    print('!!', hashed.decrypt_password(user.password))
+#################
     if not hashed.verify_password(
         hashed_password=user.password, plain_password=request.password
     ):
