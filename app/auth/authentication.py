@@ -9,13 +9,12 @@ from app.config import SECRET_KEY_HASH
 
 secret_key = SECRET_KEY_HASH
 
-
 router = APIRouter(tags=["authentication"])
 
 
 @router.post("/token")
 def get_token(
-    request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+        request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     user = (
         db.query(models.DbUser)
@@ -27,12 +26,8 @@ def get_token(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentails"
         )
 
-    hashed = Hash(secret_key)
-    ####################
-    print('!!', hashed.decrypt_password(user.password))
-#################
-    if not hashed.verify_password(
-        hashed_password=user.password, plain_password=request.password
+    if not Hash(secret_key).verify_password(
+            hashed_password=user.password, plain_password=request.password
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect password"

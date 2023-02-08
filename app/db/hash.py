@@ -32,7 +32,6 @@ class Hash:
         if not hashed_password:
             raise ValueError("encrypted_password can not be empty or None")
         try:
-            x = self.fernet.decrypt(hashed_password).decode()
             return self.fernet.decrypt(hashed_password).decode()
         except Exception as e:
             raise e
