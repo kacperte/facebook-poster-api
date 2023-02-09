@@ -12,6 +12,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import boto3
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Prepare namedtuple
 Test_output = namedtuple("Test_output", ["selenium_element", "n_for_end_and_position"])
@@ -135,7 +138,19 @@ class FacebookPoster:
 
     @staticmethod
     def get_from_aws(file_name: str, bucket_name: str, local_file_name: str):
-        s3 = boto3.resource("s3")
+        access_key = os.environ.get("ACCESS_KEY")
+        secret_key = os.environ.get("SECRET_KEY")
+
+        session = boto3.Session(
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key
+        )
+        s3 = session.resource("s3")
+
+        bucket = s3.Bucket(bucket_name)
+        for obj in bucket.objects.all():
+            print("{0}:{1}".format(bucket.name, obj.key))
+
         s3.meta.client.download_file(bucket_name, file_name, local_file_name)
         dir_path = os.path.dirname(os.path.realpath(local_file_name))
         return dir_path + "\\" + local_file_name
@@ -319,7 +334,6 @@ class FacebookPoster:
         )
         cookie.click()
 
-        print("1")
         # For pausing the script for some time
         self._time_patterns()
 
@@ -339,26 +353,21 @@ class FacebookPoster:
 
         # For pausing the script for some time
         self._time_patterns()
-        print("2")
+
         # Click login button
         login_button = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, "//button[@class='_42ft _4jy0 _6lth _4jy6 _4jy1 selected _51sy']"))
         )
-
         login_button.click()
-        print("3")
+
         # Load FB start page
         WebDriverWait(self.driver, 30).until(
             EC.presence_of_element_located((By.ID, "facebook"))
         )
-        print("4")
 
         # Scroll the feed by 3 units to simulate human-like behavior
         if human_simulation:
             self._scroll_feed(self.driver, 3)
-
-    # LOGIN_BETA = "random2022@hsswork.pl"
-    # PASSWORD_BETA = "Ewelina2022"
 
     def _time_patterns(self, tp=None):
         """
@@ -751,18 +760,21 @@ class FacebookPoster:
         # Log into Facebook
         self._login_to_facebook()
 
+        print("##### CHECKPoINT 1 ####")
+        print(os.environ.get("ACCESS_KEY"), os.environ.get("SECRET_KEY"))
         # Load imgage from s3 AWS
         image = self.get_from_aws(
             file_name=txt_name,
             bucket_name=self.bucket_name,
-            local_file_name="image.jpg",
+            local_file_name="11.txt",
         )
 
         # Load txt_file from s3 AWS
         content_filename = self.get_from_aws(
-            file_name=img_name, bucket_name=self.bucket_name, local_file_name="text.txt"
+            file_name=img_name, bucket_name=self.bucket_name, local_file_name=".jpg"
         )
 
+        print("##### CHECKPoINT 2 ####")
         counter = 0
         number = randint(3, 5)
         for group in self.groups:
