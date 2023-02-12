@@ -153,7 +153,7 @@ class FacebookPoster:
 
         s3.meta.client.download_file(bucket_name, file_name, local_file_name)
         dir_path = os.path.dirname(os.path.realpath(local_file_name))
-        return dir_path + "\\" + local_file_name
+        return dir_path + "/app/" + local_file_name
 
     def create_selenium_object_for_testing(self, content, direction=None):
         """
@@ -760,21 +760,18 @@ class FacebookPoster:
         # Log into Facebook
         self._login_to_facebook()
 
-        print("##### CHECKPoINT 1 ####")
-        print(os.environ.get("ACCESS_KEY"), os.environ.get("SECRET_KEY"))
         # Load imgage from s3 AWS
-        image = self.get_from_aws(
-            file_name=txt_name,
+        image_file = self.get_from_aws(
+            file_name=img_name,
             bucket_name=self.bucket_name,
-            local_file_name="11.txt",
+            local_file_name="image.jpg",
         )
 
         # Load txt_file from s3 AWS
-        content_filename = self.get_from_aws(
-            file_name=img_name, bucket_name=self.bucket_name, local_file_name=".jpg"
+        content_file = self.get_from_aws(
+            file_name=txt_name, bucket_name=self.bucket_name, local_file_name="content.txt"
         )
-
-        print("##### CHECKPoINT 2 ####")
+        print(image_file,content_file)
         counter = 0
         number = randint(3, 5)
         for group in self.groups:
@@ -803,7 +800,7 @@ class FacebookPoster:
             postbox = self.driver.switch_to.active_element
 
             # Load content from file
-            content = self.get_txt(content_filename)
+            content = self.get_txt(content_file)
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
@@ -812,7 +809,7 @@ class FacebookPoster:
             # Add images to post
             driver = element.parent
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            file_input.send_keys(image)
+            file_input.send_keys(image_file)
 
             # For pausing the script for sometime
             self._time_patterns()

@@ -9,7 +9,7 @@ router = APIRouter(prefix="/bot", tags=["bot"])
     summary="Run function that send content to Facebook groups",
     description="This API call function that send content to Facebook groups - text and image.",
 )
-def send_content_to_fb_groups(
+async def send_content_to_fb_groups(
     login: str,
     password: str,
 ):
