@@ -1,6 +1,8 @@
 import os
 import time
 import re
+from io import StringIO
+from PIL import Image
 from random import randint, uniform
 from collections import namedtuple
 from selenium.webdriver.firefox.options import Options
@@ -48,7 +50,7 @@ class FacebookPoster:
         # Setup Selenium Options
         options = Options()
 
-        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument("--disable-blink-features=AutomationControlled")
 
         # Add argument headless
         # options.add_argument("--headless")
@@ -110,16 +112,26 @@ class FacebookPoster:
         """
 
     @staticmethod
-    def get_txt(filename):
+    def get_txt(content):
         """
-        Return content of a text file.
-        :param filename: str File path
-        :return: str
+        Returns the content of a text file as a string.
+        :param content: str, a string representation of the content to be stored in a text file.
+        :return: str, the content of the text file.
         """
-        # Open file in read mode with ut-8 encode
-        with open(filename, "r", encoding="utf-8") as file:
-            content = file.read()
-        return content
+        # Create a file-like buffer to receive the content
+        file = StringIO(content.decode("utf-8"))
+        return file.read()
+
+    @staticmethod
+    def get_image(image_path):
+        """
+        Return image object from the given image path.
+        :param image_path: str Image file path
+        :return: Image object
+        """
+        # Open image file using Image module from PIL library
+        image = Image.open(image_path)
+        return image
 
     @staticmethod
     def _scroll_feed(driver, iterations):
@@ -137,23 +149,31 @@ class FacebookPoster:
             i += 1
 
     @staticmethod
-    def get_from_aws(file_name: str, bucket_name: str, local_file_name: str):
+    def get_from_aws(file_name: str, bucket_name: str):
+        """
+        This method retrieves the content of a file stored on AWS S3 bucket.
+        :param file_name: str - name of the file in the S3 bucket
+        :param bucket_name: str - name of the S3 bucket
+        :return: str - content of the file
+        """
+        # retrieve access and secret key from environment variables
         access_key = os.environ.get("ACCESS_KEY")
         secret_key = os.environ.get("SECRET_KEY")
 
+        # create a boto3 session using the access and secret key
         session = boto3.Session(
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key
+            aws_access_key_id=access_key, aws_secret_access_key=secret_key
         )
+        # create an S3 resource using the session
         s3 = session.resource("s3")
 
-        bucket = s3.Bucket(bucket_name)
-        for obj in bucket.objects.all():
-            print("{0}:{1}".format(bucket.name, obj.key))
+        # create an S3 object to access the specified file in the specified bucket
+        obj = s3.Object(bucket_name, file_name)
+        # retrieve the content of the file and decode it as utf-8
+        content = obj.get()["Body"].read().decode("utf-8")
 
-        s3.meta.client.download_file(bucket_name, file_name, local_file_name)
-        dir_path = os.path.dirname(os.path.realpath(local_file_name))
-        return dir_path + "/app/" + local_file_name
+        # return the content of the file
+        return content
 
     def create_selenium_object_for_testing(self, content, direction=None):
         """
@@ -356,7 +376,12 @@ class FacebookPoster:
 
         # Click login button
         login_button = WebDriverWait(self.driver, 30).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[@class='_42ft _4jy0 _6lth _4jy6 _4jy1 selected _51sy']"))
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//button[@class='_42ft _4jy0 _6lth _4jy6 _4jy1 selected _51sy']",
+                )
+            )
         )
         login_button.click()
 
@@ -761,17 +786,16 @@ class FacebookPoster:
         self._login_to_facebook()
 
         # Load imgage from s3 AWS
-        image_file = self.get_from_aws(
+        image = self.get_from_aws(
             file_name=img_name,
             bucket_name=self.bucket_name,
-            local_file_name="image.jpg",
         )
 
         # Load txt_file from s3 AWS
-        content_file = self.get_from_aws(
-            file_name=txt_name, bucket_name=self.bucket_name, local_file_name="content.txt"
+        content = self.get_from_aws(
+            file_name=txt_name, bucket_name=self.bucket_name
         )
-        print(image_file,content_file)
+
         counter = 0
         number = randint(3, 5)
         for group in self.groups:
@@ -800,7 +824,7 @@ class FacebookPoster:
             postbox = self.driver.switch_to.active_element
 
             # Load content from file
-            content = self.get_txt(content_file)
+            content = self.get_txt(content)
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
@@ -809,7 +833,7 @@ class FacebookPoster:
             # Add images to post
             driver = element.parent
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            file_input.send_keys(image_file)
+            file_input.send_keys(self.get_image(image))
 
             # For pausing the script for sometime
             self._time_patterns()

@@ -14,7 +14,7 @@ router = APIRouter(tags=["authentication"])
 
 @router.post("/token")
 def get_token(
-        request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+    request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     user = (
         db.query(models.DbUser)
@@ -27,7 +27,7 @@ def get_token(
         )
 
     if not Hash(secret_key).verify_password(
-            hashed_password=user.password, plain_password=request.password
+        hashed_password=user.password, plain_password=request.password
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect password"
