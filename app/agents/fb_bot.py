@@ -130,8 +130,7 @@ class FacebookPoster:
         :return: Image object
         """
         # Open image file using Image module from PIL library
-        image = Image.open(BytesIO(image))
-        return image
+        return Image.open(BytesIO(image))
 
     @staticmethod
     def _scroll_feed(driver, iterations):
@@ -831,9 +830,14 @@ class FacebookPoster:
                 self.send_text(content=line, selenium_element=postbox)
 
             # Add images to post
-            # driver = element.parent
-            # file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            # file_input.send_keys(self.get_image(image))
+            driver = element.parent
+            file_input = driver.execute_script(self.js_code, postbox, 0, 0)
+
+            # Save the image to a temporary file
+            with open("temp.jpg", "wb") as f:
+                image.save(f, format="JPEG")
+
+            file_input.send_keys("temp.jpg")
 
             # For pausing the script for sometime
             self._time_patterns()
