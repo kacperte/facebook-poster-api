@@ -1,6 +1,7 @@
 import os
 import time
 import re
+import pyperclip
 from io import StringIO, BytesIO
 from PIL import Image
 from random import randint, uniform
@@ -301,7 +302,7 @@ class FacebookPoster:
         # Get copied characters from clipboard
         # win32clipboard.OpenClipboard()
         # copied_text = win32clipboard.GetClipboardData()
-        copied_text = ""
+        copied_text = pyperclip.paste()
         # win32clipboard.CloseClipboard()
 
         # Calculate number of characters to move
