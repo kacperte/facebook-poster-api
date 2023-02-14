@@ -390,8 +390,8 @@ class FacebookPoster:
         )
 
         # Scroll the feed by 3 units to simulate human-like behavior
-        if human_simulation:
-            self._scroll_feed(self.driver, 3)
+        # if human_simulation:
+        #     self._scroll_feed(self.driver, 3)
 
     def _time_patterns(self, tp=None):
         """
@@ -834,6 +834,7 @@ class FacebookPoster:
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
 
             # Save the image to a temporary file
+            image = self.get_image(image)
             with open("temp.jpg", "wb") as f:
                 image.save(f, format="JPEG")
 
