@@ -1,7 +1,7 @@
 import os
 import time
 import re
-from io import StringIO
+from io import StringIO, BytesIO
 from PIL import Image
 from random import randint, uniform
 from collections import namedtuple
@@ -123,14 +123,14 @@ class FacebookPoster:
         return file.read()
 
     @staticmethod
-    def get_image(image_path):
+    def get_image(image):
         """
         Return image object from the given image path.
-        :param image_path: str Image file path
+        :param image: str Image file path
         :return: Image object
         """
         # Open image file using Image module from PIL library
-        image = Image.open(image_path)
+        image = Image.open(BytesIO(image))
         return image
 
     @staticmethod
@@ -170,7 +170,7 @@ class FacebookPoster:
         # create an S3 object to access the specified file in the specified bucket
         obj = s3.Object(bucket_name, file_name)
         # retrieve the content of the file and decode it as utf-8
-        content = obj.get()["Body"].read().decode("utf-8")
+        content = obj.get()["Body"].read()
 
         # return the content of the file
         return content
@@ -831,9 +831,9 @@ class FacebookPoster:
                 self.send_text(content=line, selenium_element=postbox)
 
             # Add images to post
-            driver = element.parent
-            file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            file_input.send_keys(self.get_image(image))
+            # driver = element.parent
+            # file_input = driver.execute_script(self.js_code, postbox, 0, 0)
+            # file_input.send_keys(self.get_image(image))
 
             # For pausing the script for sometime
             self._time_patterns()
