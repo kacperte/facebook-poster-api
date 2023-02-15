@@ -1,7 +1,6 @@
 import os
 import time
 import re
-import pyperclip
 from io import StringIO, BytesIO
 from PIL import Image
 from random import randint, uniform
@@ -16,6 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import boto3
 from dotenv import load_dotenv
+import subprocess
 
 load_dotenv()
 
@@ -300,10 +300,9 @@ class FacebookPoster:
         selenium_element.send_keys(move_key)
 
         # Get copied characters from clipboard
-        # win32clipboard.OpenClipboard()
-        # copied_text = win32clipboard.GetClipboardData()
-        copied_text = pyperclip.paste()
-        # win32clipboard.CloseClipboard()
+        p = subprocess.Popen(['xclip', '-o'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        copied_text = out.decode('utf-8')
 
         # Calculate number of characters to move
         if direction == "position":
@@ -331,7 +330,7 @@ class FacebookPoster:
             # Move cursor to the specified position
             selenium_element.send_keys(move_key * n_to_move)
             self._time_patterns()
-
+        # print(content, n_to_move)
         return n_to_move
 
     def _login_to_facebook(self, human_simulation=True):
