@@ -18,7 +18,7 @@ router = APIRouter(prefix="/bot", tags=["bot"])
     summary="Run function that send content to Facebook groups",
     description="This API call function that send content to Facebook groups - text and image.",
 )
-def send_content_to_fb_groups(db: Session = Depends(get_db), email: str = None, groups_name: str = None):
+async def send_content_to_fb_groups(db: Session = Depends(get_db), email: str = None, groups_name: str = None):
 
     response_token = requests.post(
         url="http://localhost:8000/token",
