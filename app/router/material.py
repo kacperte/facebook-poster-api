@@ -84,7 +84,7 @@ def upload_file_to_s3_fastapi(
     description="This API call function that create new material.",
     response_model=MaterialDisplay,
 )
-def create_material(
+async def create_material(
     client: str,
     position: str,
     creator_id: int,
@@ -126,7 +126,7 @@ def create_material(
     description="This API call function that read all materials.",
     response_model=List[MaterialDisplay],
 )
-def get_all_materials(
+async def get_all_materials(
     db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
 ):
     return db_material.get_all_materials(db)
@@ -138,7 +138,7 @@ def get_all_materials(
     description="This API call function that read one material.",
     response_model=MaterialDisplay,
 )
-def get_one_materials(
+async def get_one_materials(
     id: int,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -152,7 +152,7 @@ def get_one_materials(
     description="This API call function that read one material.",
     response_model=List[MaterialDisplay],
 )
-def get_materials_by_client(
+async def get_materials_by_client(
     client: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -165,7 +165,7 @@ def get_materials_by_client(
     summary="Update material",
     description="This API call function that update material.",
 )
-def update_material(
+async def update_material(
     id: int,
     client: str,
     position: str,
@@ -203,7 +203,7 @@ def update_material(
     summary="Delete material",
     description="This API call function that delete material.",
 )
-def delete_user(
+async def delete_user(
     id: int,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),

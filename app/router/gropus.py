@@ -44,7 +44,7 @@ def process_csv_file(file):
     description="This API call function that create new FB group list.",
     response_model=GroupsDispaly,
 )
-def create_group(
+async def create_group(
     groups_name: str,
     groups: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -66,7 +66,7 @@ def create_group(
     description="This API call function that read all FB groups.",
     response_model=List[GroupsDispaly],
 )
-def get_all_groups(
+async def get_all_groups(
     db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
 ):
     return db_groups.get_all_groups(db)
@@ -78,7 +78,7 @@ def get_all_groups(
     description="This API call function that read FB group by group name.",
     response_model=GroupsDispaly,
 )
-def get_group_by_name(
+async def get_group_by_name(
     groups_name: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -91,7 +91,7 @@ def get_group_by_name(
     summary="Update group",
     description="This API call function that update FB group.",
 )
-def update_group(
+async def update_group(
     id: int,
     groups_name: str,
     groups: UploadFile = File(...),
@@ -111,7 +111,7 @@ def update_group(
     summary="Delete group",
     description="This API call function that delete group.",
 )
-def delete_group(
+async def delete_group(
     groups_name: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),

@@ -15,7 +15,7 @@ router = APIRouter(prefix="/user", tags=["user"])
     description="This API call function that create new user.",
     response_model=UserDisplay,
 )
-def create_user(
+async def create_user(
     request: UserBase,
     db: Session = Depends(get_db),
     # current_user: UserBase = Depends(get_current_user),
@@ -34,7 +34,7 @@ def create_user(
     description="This API call function t hat read all users.",
     response_model=List[UserDisplay],
 )
-def get_all_users(
+async def get_all_users(
     db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
 ):
     return db_user.get_all_users(db)
@@ -46,7 +46,7 @@ def get_all_users(
     description="This API call function that read one user.",
     response_model=UserDisplay,
 )
-def get_one_user(
+async def get_one_user(
     email: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -59,7 +59,7 @@ def get_one_user(
     summary="Update user",
     description="This API call function that update user.",
 )
-def update_user(
+async def update_user(
     email: str,
     request: UserBase,
     db: Session = Depends(get_db),
@@ -73,7 +73,7 @@ def update_user(
     summary="Delete user",
     description="This API call function that delete user.",
 )
-def delete_user(
+async def delete_user(
     mail: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
