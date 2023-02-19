@@ -13,7 +13,7 @@ app.conf.update(
 def facebook_poster(login: str, password: str, groups: list):
 
     FacebookPoster(login=login, password=password, groups=groups).prepare_and_send_post(
-        txt_name="copy/1.txt", img_name="content/2.jpg"
+        txt_name="copy/2.txt", img_name="content/2.jpg"
     )
 
     return {"message": "Success"}
