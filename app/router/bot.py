@@ -1,18 +1,41 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.tasks import facebook_poster
+import requests
+import json
+from app.db import db_user
+from app.db.database import get_db
+from sqlalchemy.orm.session import Session
+from app.config import SECRET_KEY_HASH
+from app.db.hash import Hash
+
+secret_key = SECRET_KEY_HASH
+
 
 router = APIRouter(prefix="/bot", tags=["bot"])
-
 
 @router.post(
     path="/run",
     summary="Run function that send content to Facebook groups",
     description="This API call function that send content to Facebook groups - text and image.",
 )
-async def send_content_to_fb_groups(
-    login: str,
-    password: str,
-):
-    groups_name = ["https://www.facebook.com/groups/1281302162058634"]
+def send_content_to_fb_groups(db: Session = Depends(get_db), email: str = None, groups_name: str = None):
 
-    facebook_poster(login=login, password=password, groups=groups_name)
+    response_token = requests.post(
+        url="http://localhost:8000/token",
+        data={"grant_type": "password", "username": "kacper", "password": "kacper"},
+    ).content
+    response_dict = json.loads(response_token)
+    auth_token = response_dict["access_token"]
+    headers = {"Authorization": f"Bearer {auth_token}"}
+
+    response_groups = requests.get(
+        url=f"http://localhost:8000/gropus/group/{groups_name}",
+        headers=headers,
+    ).content
+    response_dict = json.loads(response_groups)
+    groups = response_dict['groups'].split(',')
+
+    password = db_user.get_user(db, email).password
+    enc_pass = Hash(secret_key).decrypt_password(password)
+
+    facebook_poster(login=email, password=enc_pass, groups=groups)

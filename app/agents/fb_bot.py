@@ -16,8 +16,6 @@ from selenium.webdriver.common.keys import Keys
 import boto3
 from dotenv import load_dotenv
 
-
-
 load_dotenv()
 
 # Prepare namedtuple
@@ -297,7 +295,9 @@ class FacebookPoster:
         self._time_patterns()
 
         # Copy selected characters
-        copied_text = self.driver.execute_script('return window.getSelection().toString();')
+        copied_text = self.driver.execute_script(
+            "return window.getSelection().toString();"
+        )
 
         # Unselect selected characters
         selenium_element.send_keys(move_key)
@@ -789,9 +789,7 @@ class FacebookPoster:
         )
 
         # Load txt_file from s3 AWS
-        content = self.get_from_aws(
-            file_name=txt_name, bucket_name=self.bucket_name
-        )
+        content = self.get_from_aws(file_name=txt_name, bucket_name=self.bucket_name)
 
         counter = 0
         number = randint(3, 5)
