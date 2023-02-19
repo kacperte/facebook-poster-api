@@ -293,6 +293,9 @@ class FacebookPoster:
             n_to_move = to_move if to_move else position
         self.action.reset_actions()
 
+        # For pausing the script for some time
+        self._time_patterns()
+
         # Copy selected characters
         copied_text = self.driver.execute_script('return window.getSelection().toString();')
 
