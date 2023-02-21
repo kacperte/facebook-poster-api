@@ -14,7 +14,3 @@ def facebook_poster(login: str, password: str, groups: list):
 
     return {"message": "Success"}
 
-"""
-LOGIN_TRZEPIECINSKI = "kacper.trzepiecinski@hsswork.pl"
-PASSWORD_TRZEPIECINSKI = "QuD*CC12d_Hju1!"
-"""
