@@ -15,6 +15,7 @@ secret_key = SECRET_KEY_HASH
 # Initialize the API router with the "/bot" prefix and "bot" tag
 router = APIRouter(prefix="/bot", tags=["bot"])
 
+
 # Define a Pydantic model for the content request data
 class ContentRequest(BaseModel):
     login: str

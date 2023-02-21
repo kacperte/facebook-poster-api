@@ -61,7 +61,7 @@ class GroupsBase(BaseModel):
     groups: str
 
 
-class GroupsDispaly(BaseModel):
+class GroupsDisplay(BaseModel):
     id: int
     groups_name: str
     groups: str

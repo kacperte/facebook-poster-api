@@ -1,6 +1,6 @@
 import csv
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
-from app.schemas import GroupsBase, GroupsDispaly, UserBase
+from app.schemas import GroupsBase, GroupsDisplay, UserBase
 from typing import List
 from sqlalchemy.orm.session import Session
 from app.db.database import get_db
@@ -9,7 +9,7 @@ from tempfile import NamedTemporaryFile
 from app.auth.oauth2 import get_current_user
 
 
-router = APIRouter(prefix="/gropus", tags=["gropus"])
+router = APIRouter(prefix="/groups", tags=["groups"])
 
 
 def process_csv_file(file):
@@ -42,7 +42,7 @@ def process_csv_file(file):
     path="/",
     summary="Create new FB group list",
     description="This API call function that create new FB group list.",
-    response_model=GroupsDispaly,
+    response_model=GroupsDisplay,
 )
 async def create_group(
     groups_name: str,
@@ -64,7 +64,7 @@ async def create_group(
     path="/",
     summary="Read all groups",
     description="This API call function that read all FB groups.",
-    response_model=List[GroupsDispaly],
+    response_model=List[GroupsDisplay],
 )
 async def get_all_groups(
     db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)
@@ -76,7 +76,7 @@ async def get_all_groups(
     path="/group/{groups_name}",
     summary="Read one material by group name",
     description="This API call function that read FB group by group name.",
-    response_model=GroupsDispaly,
+    response_model=GroupsDisplay,
 )
 async def get_group_by_name(
     groups_name: str,
