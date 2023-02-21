@@ -1,11 +1,8 @@
 from celery import Celery
+import pika
 from .agents.fb_bot import FacebookPoster
 
-app = Celery("queue")
-
-app.conf.update(
-    BROKER_URL="0.0.0.0:6379",
-)
+app = Celery("queue", broker="amqp://user:password@rabbitmq:5672")
 
 
 @app.task(name="FB_poster")
@@ -16,7 +13,6 @@ def facebook_poster(login: str, password: str, groups: list):
     )
 
     return {"message": "Success"}
-
 
 """
 LOGIN_TRZEPIECINSKI = "kacper.trzepiecinski@hsswork.pl"
