@@ -75,7 +75,8 @@ def send_content_to_fb_groups(
         password = user.password
         enc_pass = Hash(secret_key).decrypt_password(password)
     except Exception as e:
-        # If an error occurs while decrypting the password, raise an HTTPException with a 500 status code and an error message
+        # If an error occurs while decrypting the password, raise an HTTPException with a 500 status code and an
+        # error message
         raise HTTPException(status_code=500, detail="Error decrypting password")
 
     # Use Celery to asynchronously send content to the specified Facebook groups
