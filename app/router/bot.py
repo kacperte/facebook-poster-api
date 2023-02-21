@@ -28,7 +28,7 @@ class ContentRequest(BaseModel):
     summary="Run function that send content to Facebook groups",
     description="This API call function that send content to Facebook groups - text and image.",
 )
-async def send_content_to_fb_groups(
+def send_content_to_fb_groups(
     db: Session = Depends(get_db), content_request: ContentRequest = None
 ):
 
