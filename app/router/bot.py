@@ -42,7 +42,9 @@ def send_content_to_fb_groups(
         )
         response_token.raise_for_status()
     except requests.HTTPError as e:
-        raise HTTPException(status_code=e.response.status_code, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=e.response.status_code, detail="Invalid credentials"
+        )
 
     response_dict = json.loads(response_token.content)
     auth_token = response_dict["access_token"]
@@ -69,4 +71,6 @@ def send_content_to_fb_groups(
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error decrypting password")
 
-    facebook_poster(login=content_request.email, password=enc_pass, groups=groups)
+    task = facebook_poster.delay(login=content_request.email, password=enc_pass, groups=groups)
+    return {"task_id": task.id}
+

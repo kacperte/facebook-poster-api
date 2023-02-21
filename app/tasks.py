@@ -1,7 +1,6 @@
 from celery import Celery
 from .agents.fb_bot import FacebookPoster
 
-
 app = Celery("queue")
 
 app.conf.update(
