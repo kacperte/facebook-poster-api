@@ -8,7 +8,6 @@ from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
 from app.db.hash import Hash
 from pydantic import BaseModel
-from urllib.error import HTTPError
 
 
 secret_key = SECRET_KEY_HASH
