@@ -5,7 +5,7 @@ from .agents.fb_bot import FacebookPoster
 app = Celery("queue", broker="amqp://user:password@rabbitmq:5672")
 
 
-@app.task(name="FB_poster")
+@app.task(name="fb_poster")
 def facebook_poster(login: str, password: str, groups: list):
 
     FacebookPoster(login=login, password=password, groups=groups).prepare_and_send_post(

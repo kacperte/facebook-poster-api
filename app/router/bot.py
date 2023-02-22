@@ -56,7 +56,7 @@ def send_content_to_fb_groups(
     try:
         # Send a request to the groups endpoint to retrieve a comma-separated list of group IDs
         response_groups = requests.get(
-            url=f"http://localhost:8000/gropus/group/{content_request.groups_name}",
+            url=f"http://localhost:8000/groups/group/{content_request.groups_name}",
             headers=headers,
         )
         response_dict = response_groups.json()

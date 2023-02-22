@@ -41,7 +41,7 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - ACCESS_KEY=${ACCESS_KEY}
-    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    command: bash -c "celery -A app.worker worker -Q queue.facebook_poster & uvicorn app.main:app --host 0.0.0.0 --reload"
     ports:
       - "8000:8000"
 
