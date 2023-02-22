@@ -3,6 +3,7 @@ import pika
 from .agents.fb_bot import FacebookPoster
 
 app = Celery("queue", broker="amqp://user:password@rabbitmq:5672")
+app.autodiscover_tasks()
 
 
 @app.task(name="fb_poster")

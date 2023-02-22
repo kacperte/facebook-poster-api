@@ -1,5 +1,7 @@
 FROM python:3.9
 
+ENV PYTHONPATH=/code
+
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
