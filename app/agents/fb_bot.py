@@ -119,7 +119,7 @@ class FacebookPoster:
         :return: str, the content of the text file.
         """
         # Create a file-like buffer to receive the content
-        file = StringIO(content.decode("utf-8"))
+        file = StringIO(content)
         return file.read()
 
     @staticmethod
@@ -848,3 +848,4 @@ class FacebookPoster:
                 self._scroll_feed(self.driver, 5)
 
             counter += 1
+
