@@ -15,6 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import boto3
 from dotenv import load_dotenv
+from typing import Union
 
 load_dotenv()
 
@@ -112,7 +113,7 @@ class FacebookPoster:
         """
 
     @staticmethod
-    def get_txt(content):
+    def get_txt(content: Union[bytes, str]) -> str:
         """
         Returns the content of a text file as a string.
         :param content: bytes or str, the content to be stored in a text file.
@@ -132,14 +133,21 @@ class FacebookPoster:
         return file.read()
 
     @staticmethod
-    def get_image(image):
+    def get_image(image: Union[str, bytes]) -> Image:
         """
-        Return image object from the given image path.
-        :param image: str Image file path
+        Return image object from the given image path or bytes content.
+        :param image: str or bytes Image file path or bytes content
         :return: Image object
         """
-        # Open image file using Image module from PIL library
-        return Image.open(BytesIO(image))
+        if isinstance(image, str):
+            # Open image file using Image module from PIL library
+            return Image.open(image)
+        elif isinstance(image, bytes):
+            # Open image using BytesIO and Image module from PIL library
+            return Image.open(BytesIO(image))
+        else:
+            # Raise an error if the content is not str or bytes
+            raise TypeError("image must be str or bytes")
 
     @staticmethod
     def _scroll_feed(driver, iterations):
