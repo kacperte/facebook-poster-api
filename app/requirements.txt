@@ -64,5 +64,5 @@ vine==5.0.0
 wcwidth==0.2.5
 webdriver-manager==3.8.4
 wsproto==1.2.0
+rabbitmq
 pika
-redis

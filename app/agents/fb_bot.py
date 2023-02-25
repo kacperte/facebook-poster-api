@@ -54,7 +54,7 @@ class FacebookPoster:
         options.add_argument("--disable-blink-features=AutomationControlled")
 
         # Add argument headless
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
@@ -147,7 +147,7 @@ class FacebookPoster:
             return Image.open(BytesIO(image))
         else:
             # Raise an error if the content is not str or bytes
-            raise TypeError("image must be str or bytes")
+            raise TypeError(f"image must be str or bytes - it's {type(image)}")
 
     @staticmethod
     def _scroll_feed(driver, iterations):
@@ -796,28 +796,31 @@ class FacebookPoster:
         self._time_patterns()
 
     def prepare_and_send_post(self, txt_name: str, img_name: str):
+        print("1")
         # Log into Facebook
         self._login_to_facebook()
 
-        # Load imgage from s3 AWS
-        image = self.get_from_aws(
-            file_name=img_name,
-            bucket_name=self.bucket_name,
-        )
-
-        # Load txt_file from s3 AWS
-        content = self.get_from_aws(file_name=txt_name, bucket_name=self.bucket_name)
-
         counter = 0
         number = randint(3, 5)
+        print("4")
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
             print(f"/// Start processing group: {group + 'buy_sell_discussion'}")
 
+            print("2")
+            # Load imgage from s3 AWS
+            image = self.get_from_aws(
+                file_name=img_name,
+                bucket_name=self.bucket_name,
+            )
+            print("3")
+            # Load txt_file from s3 AWS
+            content = self.get_from_aws(file_name=txt_name, bucket_name=self.bucket_name)
+
             # For pausing the script for sometime
             self._time_patterns()
-
+            print("5")
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
@@ -831,37 +834,38 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
-
+            print("6")
             # Activate postbox pop up to send value to it
             postbox = self.driver.switch_to.active_element
-
+            print("7")
             # Load content from file
             content = self.get_txt(content)
-
+            print("8")
             #  Iterate through content file and add text
             for line in content.split("\n"):
                 self.send_text(content=line, selenium_element=postbox)
-
+            print("9")
             # Add images to post
             driver = element.parent
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-
+            print("10")
             # Save the image to a temporary file
             image = self.get_image(image)
             with open("temp.jpg", "wb") as f:
                 image.save(f, format="JPEG")
-
+            print("11")
             file_input.send_keys("temp.jpg")
-
+            print("12")
             # For pausing the script for sometime
             self._time_patterns()
 
             # Click post button
             self.driver.find_element(By.XPATH, "//div[@aria-label='Opublikuj']").click()
-
+            print("13")
             if counter % number:
                 self.driver.get(self.base_url)
                 self._time_patterns()
                 self._scroll_feed(self.driver, 5)
-
+            print("14")
             counter += 1
+            print(f"/// End processing group: {group + 'buy_sell_discussion'}")

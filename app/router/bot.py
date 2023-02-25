@@ -8,6 +8,7 @@ from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
 from app.db.hash import Hash
 from pydantic import BaseModel
+from app.agents.fb_bot import FacebookPoster
 
 
 # Load the secret key hash from the app configuration
@@ -84,4 +85,5 @@ def send_content_to_fb_groups(
     # Use Celery to asynchronously send content to the specified Facebook groups
     task = facebook_poster.delay(login=content_request.email, password=enc_pass, groups=groups)
     return {"task_id": task.id}
+
 

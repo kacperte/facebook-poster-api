@@ -47,11 +47,11 @@ services:
       - "8000:8000"
 
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3-management
     hostname: rabbitmq
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
     ports:
       - "5672:5672"
       - "15672:15672"
