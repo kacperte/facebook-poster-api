@@ -115,11 +115,20 @@ class FacebookPoster:
     def get_txt(content):
         """
         Returns the content of a text file as a string.
-        :param content: str, a string representation of the content to be stored in a text file.
+        :param content: bytes or str, the content to be stored in a text file.
         :return: str, the content of the text file.
         """
+        if isinstance(content, bytes):
+            # Decode the bytes content using UTF-8 encoding
+            content = content.decode("utf-8")
+        elif not isinstance(content, str):
+            # Raise an error if the content is not bytes or str
+            raise TypeError("content must be bytes or str")
+
         # Create a file-like buffer to receive the content
         file = StringIO(content)
+
+        # Return the content of the text file
         return file.read()
 
     @staticmethod
@@ -848,4 +857,3 @@ class FacebookPoster:
                 self._scroll_feed(self.driver, 5)
 
             counter += 1
-

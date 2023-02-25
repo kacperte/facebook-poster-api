@@ -1,8 +1,20 @@
 from celery import Celery
 import pika
+from kombu import Queue, Exchange
 from .agents.fb_bot import FacebookPoster
 
-app = Celery("queue", broker="amqp://user:password@rabbitmq:5672")
+app = Celery("queue")
+app.conf.broker_url = "redis://redis:6379/0"
+app.conf.result_backend = "redis://redis:6379/0"
+app.conf.task_routes = {"tasks.send_email_task": {"queue": "email-queue"}}
+app.conf.task_queues = (
+    Queue("default", Exchange("default"), routing_key="default"),
+    Queue(
+        "email-queue",
+        Exchange("email-queue"),
+        routing_key="email.tasks.send_email_task",
+    ),
+)
 app.autodiscover_tasks()
 
 
@@ -14,4 +26,3 @@ def facebook_poster(login: str, password: str, groups: list):
     )
 
     return {"message": "Success"}
-
