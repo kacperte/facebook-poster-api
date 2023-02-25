@@ -35,19 +35,24 @@ services:
       - db
       - firefox
       - selenium-hub
-      - redis
+      - rabbitmq
     volumes:
       - ./app:/code/app
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - ACCESS_KEY=${ACCESS_KEY}
+      - CELERY_BROKER_URL=amqp://rabbitmq
     command: bash -c "celery -A app.tasks worker & uvicorn app.main:app --host 0.0.0.0 --reload"
     ports:
       - "8000:8000"
 
-  redis:
-    image: redis
-    hostname: redis-bot
+  rabbitmq:
+    image: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     ports:
-      - "6379:6379"
+      - "5672:5672"
+      - "15672:15672"
     restart: always
