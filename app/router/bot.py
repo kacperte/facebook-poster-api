@@ -83,7 +83,7 @@ def send_content_to_fb_groups(
         raise HTTPException(status_code=500, detail="Error decrypting password")
 
     # Use Celery to asynchronously send content to the specified Facebook groups
-    task = facebook_poster.delay(login=content_request.email, password=enc_pass, groups=groups)
+    task = facebook_poster.delay(
+        login=content_request.email, password=enc_pass, groups=groups
+    )
     return {"task_id": task.id}
-
-

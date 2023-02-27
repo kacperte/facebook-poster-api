@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 import re
 from io import StringIO, BytesIO
 from PIL import Image
@@ -16,11 +17,14 @@ from selenium.webdriver.common.keys import Keys
 import boto3
 from dotenv import load_dotenv
 from typing import Union
+from .logger import create_logger
 
 load_dotenv()
 
 # Prepare namedtuple
 Test_output = namedtuple("Test_output", ["selenium_element", "n_for_end_and_position"])
+
+logger = create_logger(__name__, level=logging.INFO)
 
 
 class FacebookPoster:
@@ -404,6 +408,8 @@ class FacebookPoster:
             EC.presence_of_element_located((By.ID, "facebook"))
         )
 
+        logger.info("Logged in to Facebook successfully")
+
         # Scroll the feed by 3 units to simulate human-like behavior
         # if human_simulation:
         #     self._scroll_feed(self.driver, 3)
@@ -672,7 +678,6 @@ class FacebookPoster:
                 (By.XPATH, "//span[@class='x12mruv9 xfs2ol5 x1gslohp x12nagc']")
             )
         )
-
         # Initialize empty lists to store text formatting actions for text without bold and italic formatting,
         # and text with only bold and italic formatting
         list_of_action_to_do_with_text_without_bold_and_italic = list()
@@ -699,7 +704,6 @@ class FacebookPoster:
             list_of_action_to_do_with_text_only_with_bold_and_italic = [
                 num for num in tag_values.values() if num in (0, 1)
             ]
-
         # If there are no text formatting actions to perform
         if (
             not list_of_action_to_do_with_text_without_bold_and_italic
@@ -719,14 +723,12 @@ class FacebookPoster:
 
             # Send the `content_without_tags` to the Facebook text box
             selenium_element.send_keys(content_without_tags)
-
             # Press and hold Shift then press left by n times (after this, we reset action chain)
             self.action.key_down(Keys.SHIFT).send_keys(Keys.LEFT * n).perform()
             self.action.reset_actions()
 
             # For pausing the script for some time
             self._time_patterns()
-
             # Iterate through actions in `list_of_actions_without_bold_and_italic` and click the corresponding button
             # to trigger the action
             for action in list_of_action_to_do_with_text_without_bold_and_italic:
@@ -734,7 +736,6 @@ class FacebookPoster:
 
                 # For pausing the script for some time
                 self._time_patterns(2)
-
             # Set cursor at the start of text
             selenium_element.send_keys(Keys.LEFT)
             # Check if the cursor is at the start of the line and move it if necessary
@@ -743,7 +744,6 @@ class FacebookPoster:
                 selenium_element=selenium_element,
                 direction="start",
             )
-
             # Add n_to_move to variable when we store lenght of content to correct proper lenght
             n += n_to_move
 
@@ -755,13 +755,11 @@ class FacebookPoster:
                 text_modify_butttons=text_modify_butttons,
                 n_for_end_and_position=n_to_move,
             )
-
             # For pausing the script for some time
             self._time_patterns()
 
             # Move the cursor to the end of the line
             selenium_element.send_keys(Keys.RIGHT * n)
-
             # Check if the cursor is at the end of the line and move it if necessary
             self.move_cursor(
                 content=content_without_tags,
@@ -769,7 +767,6 @@ class FacebookPoster:
                 direction="end",
                 n_for_end_and_position=n_to_move,
             )
-
             # For pausing the script for some time
             self._time_patterns()
 
@@ -779,7 +776,6 @@ class FacebookPoster:
                     "b" if last_action == 0 else "i"
                 ).perform()
                 self.action.reset_actions()
-
             # If the text has a list formatting, press Enter twice to turn off the formatting
             if (
                 5 in list_of_action_to_do_with_text_without_bold_and_italic
@@ -791,38 +787,38 @@ class FacebookPoster:
             # In any other case, press Enter once
             else:
                 selenium_element.send_keys(Keys.ENTER)
-
         # For pausing the script for some time
         self._time_patterns()
 
     def prepare_and_send_post(self, txt_name: str, img_name: str):
-        print("1")
+
         # Log into Facebook
         self._login_to_facebook()
 
         counter = 0
         number = randint(3, 5)
-        print("4")
+
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
-            print(f"/// Start processing group: {group + 'buy_sell_discussion'}")
+            logger.info(f"/// Start processing group: {group + 'buy_sell_discussion'}")
 
-            print("2")
             # Load imgage from s3 AWS
             image = self.get_from_aws(
                 file_name=img_name,
                 bucket_name=self.bucket_name,
             )
-            print("3")
+
             # Load txt_file from s3 AWS
-            content = self.get_from_aws(file_name=txt_name, bucket_name=self.bucket_name)
+            content = self.get_from_aws(
+                file_name=txt_name, bucket_name=self.bucket_name
+            )
 
             # For pausing the script for sometime
             self._time_patterns()
-            print("5")
+
             # Locate postbox element and click it
-            element = WebDriverWait(self.driver, 10).until(
+            element = WebDriverWait(self.driver, 20).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,
@@ -834,38 +830,41 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
-            print("6")
+
             # Activate postbox pop up to send value to it
             postbox = self.driver.switch_to.active_element
-            print("7")
+
             # Load content from file
             content = self.get_txt(content)
-            print("8")
+
             #  Iterate through content file and add text
             for line in content.split("\n"):
                 self.send_text(content=line, selenium_element=postbox)
-            print("9")
+
             # Add images to post
             driver = element.parent
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            print("10")
             # Save the image to a temporary file
             image = self.get_image(image)
             with open("temp.jpg", "wb") as f:
                 image.save(f, format="JPEG")
-            print("11")
+
             file_input.send_keys("temp.jpg")
-            print("12")
+
             # For pausing the script for sometime
             self._time_patterns()
 
             # Click post button
             self.driver.find_element(By.XPATH, "//div[@aria-label='Opublikuj']").click()
-            print("13")
+
+            # For pausing the script for sometime
+            self._time_patterns()
+
             if counter % number:
                 self.driver.get(self.base_url)
                 self._time_patterns()
                 self._scroll_feed(self.driver, 5)
-            print("14")
+
             counter += 1
-            print(f"/// End processing group: {group + 'buy_sell_discussion'}")
+            logger.info(f"/// End processing group: {group + 'buy_sell_discussion'}")
+
