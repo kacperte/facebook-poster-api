@@ -7,7 +7,7 @@ from app.db.database import get_db
 from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
 from app.db.hash import Hash
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 # Load the secret key hash from the app configuration
@@ -19,10 +19,10 @@ router = APIRouter(prefix="/bot", tags=["bot"])
 
 # Define a Pydantic model for the content request data
 class ContentRequest(BaseModel):
-    login: str
-    password: str
-    email: str
-    groups_name: str
+    login: str = Field(min_length=1, max_length=128)
+    password: str = Field(min_length=1, max_length=128)
+    email: EmailStr
+    groups_name: str = Field(min_length=1, max_length=128)
 
 
 @router.post(
