@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, ConstrainedList
+from pydantic import BaseModel, Field, EmailStr, PositiveInt
 from typing import List
 
 
@@ -19,7 +19,7 @@ class UserBase(BaseModel):
 
 
 class UserDisplay(BaseModel):
-    id: int = Field(max_digits=3)
+    id: PositiveInt = Field(..., max_digits=3)
     username: str = Field(min_length=1, max_length=128)
     email: str = EmailStr
     items: List[Material] = []
@@ -29,7 +29,7 @@ class UserDisplay(BaseModel):
 
 
 class User(BaseModel):
-    id: int = Field(max_digits=3)
+    id: PositiveInt = Field(..., max_digits=3)
     username: str = Field(min_length=1, max_length=128)
 
     class Config:
@@ -41,11 +41,11 @@ class MaterialBase(BaseModel):
     position: str = Field(min_length=1, max_length=128)
     image_name: str = Field(min_length=1, max_length=128)
     text_name: str = Field(min_length=1, max_length=128)
-    creator_id: int = Field(max_digits=3)
+    creator_id: PositiveInt = Field(..., max_digits=3)
 
 
 class MaterialDisplay(BaseModel):
-    id: int = Field(max_digits=3)
+    id: PositiveInt = Field(..., max_digits=3)
     client: str = Field(min_length=1, max_length=128)
     position: str = Field(min_length=1, max_length=128)
     image_name: str = Field(min_length=1, max_length=128)
@@ -62,7 +62,7 @@ class GroupsBase(BaseModel):
 
 
 class GroupsDisplay(BaseModel):
-    id: int = Field(max_digits=3)
+    id: PositiveInt = Field(..., max_digits=3)
     groups_name: str
     groups: str
 
