@@ -8,7 +8,7 @@ from app.db import db_material
 from typing import List, Tuple
 from tempfile import NamedTemporaryFile
 from app.auth.oauth2 import get_current_user
-from pydantic import Field, By
+from pydantic import Field
 
 router = APIRouter(prefix="/material", tags=["material"])
 
