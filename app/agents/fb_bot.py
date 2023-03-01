@@ -868,3 +868,4 @@ class FacebookPoster:
             counter += 1
             logger.info(f"/// End processing group: {group + 'buy_sell_discussion'}")
 
+        self.driver.quit()

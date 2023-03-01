@@ -8,7 +8,6 @@ from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
 from app.db.hash import Hash
 from pydantic import BaseModel
-from app.agents.fb_bot import FacebookPoster
 
 
 # Load the secret key hash from the app configuration

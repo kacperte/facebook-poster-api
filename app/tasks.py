@@ -1,4 +1,3 @@
-# import pika
 import logging
 from celery import Celery
 from .agents.fb_bot import FacebookPoster
