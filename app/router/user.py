@@ -5,6 +5,8 @@ from app.db.database import get_db
 from app.db import db_user
 from typing import List
 from app.auth.oauth2 import get_current_user
+from pydantic import EmailStr
+
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -18,13 +20,13 @@ router = APIRouter(prefix="/user", tags=["user"])
 async def create_user(
     request: UserBase,
     db: Session = Depends(get_db),
-    # current_user: UserBase = Depends(get_current_user),
+    current_user: UserBase = Depends(get_current_user),
 ):
     user = db_user.create_user(db, request)
 
     if not user.id:
         raise HTTPException(status_code=400, detail="Error creating user.")
-    print(user.password)
+
     return user
 
 
@@ -47,7 +49,7 @@ async def get_all_users(
     response_model=UserDisplay,
 )
 async def get_one_user(
-    email: str,
+    email: str = EmailStr,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
@@ -60,8 +62,8 @@ async def get_one_user(
     description="This API call function that update user.",
 )
 async def update_user(
-    email: str,
-    request: UserBase,
+    email: str = EmailStr,
+    request: UserBase = None,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
@@ -74,7 +76,7 @@ async def update_user(
     description="This API call function that delete user.",
 )
 async def delete_user(
-    mail: str,
+    mail: str = EmailStr,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
