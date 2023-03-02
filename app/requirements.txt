@@ -66,3 +66,4 @@ webdriver-manager==3.8.4
 wsproto==1.2.0
 rabbitmq
 pika
+pydantic[email]

@@ -1,27 +1,28 @@
-from pydantic import BaseModel, Field, EmailStr, PositiveInt
+from pydantic import BaseModel
 from typing import List
 
 
 class Material(BaseModel):
-    client: str = Field(min_length=1, max_length=128)
-    position: str = Field(min_length=1, max_length=128)
-    image_name: str = Field(min_length=1, max_length=128)
-    text_name: str = Field(min_length=1, max_length=128)
+    client: str
+    position: str
+    image_name: str
+    text_name: str
 
     class Config:
         orm_mode = True
 
 
 class UserBase(BaseModel):
-    username: str = Field(min_length=1, max_length=128)
-    email: str = EmailStr
-    password: str = Field(min_length=1, max_length=128)
+    username: str
+    email: str
+    password: str
 
 
 class UserDisplay(BaseModel):
-    id: PositiveInt = Field(..., max_digits=3)
-    username: str = Field(min_length=1, max_length=128)
-    email: str = EmailStr
+    id: int
+    username: str
+    email: str
+
     items: List[Material] = []
 
     class Config:
@@ -29,27 +30,27 @@ class UserDisplay(BaseModel):
 
 
 class User(BaseModel):
-    id: PositiveInt = Field(..., max_digits=3)
-    username: str = Field(min_length=1, max_length=128)
+    id: int
+    username: str
 
     class Config:
         orm_mode = True
 
 
 class MaterialBase(BaseModel):
-    client: str = Field(min_length=1, max_length=128)
-    position: str = Field(min_length=1, max_length=128)
-    image_name: str = Field(min_length=1, max_length=128)
-    text_name: str = Field(min_length=1, max_length=128)
-    creator_id: PositiveInt = Field(..., max_digits=3)
+    client: str
+    position: str
+    image_name: str
+    text_name: str
+    creator_id: int
 
 
 class MaterialDisplay(BaseModel):
-    id: PositiveInt = Field(..., max_digits=3)
-    client: str = Field(min_length=1, max_length=128)
-    position: str = Field(min_length=1, max_length=128)
-    image_name: str = Field(min_length=1, max_length=128)
-    text_name: str = Field(min_length=1, max_length=128)
+    id: int
+    client: str
+    position: str
+    image_name: str
+    text_name: str
     user: User
 
     class Config:
@@ -57,12 +58,12 @@ class MaterialDisplay(BaseModel):
 
 
 class GroupsBase(BaseModel):
-    groups_name: str = Field(min_length=1, max_length=128)
-    groups: str = Field(min_length=1, max_length=128)
+    groups_name: str
+    groups: str
 
 
 class GroupsDisplay(BaseModel):
-    id: PositiveInt = Field(..., max_digits=3)
+    id: int
     groups_name: str
     groups: str
 

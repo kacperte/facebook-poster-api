@@ -7,7 +7,7 @@ from app.db.database import get_db
 from app.db import db_groups
 from tempfile import NamedTemporaryFile
 from app.auth.oauth2 import get_current_user
-from pydantic import Field
+
 
 router = APIRouter(prefix="/groups", tags=["groups"])
 
@@ -45,7 +45,7 @@ def process_csv_file(file):
     response_model=GroupsDisplay,
 )
 async def create_group(
-    groups_name: str = Field(min_length=1, max_length=128),
+    groups_name: str,
     groups: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -79,7 +79,7 @@ async def get_all_groups(
     response_model=GroupsDisplay,
 )
 async def get_group_by_name(
-    groups_name: str = Field(min_length=1, max_length=128),
+    groups_name: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
@@ -92,8 +92,8 @@ async def get_group_by_name(
     description="This API call function that update FB group.",
 )
 async def update_group(
-    id: int = Field(max_digits=3),
-    groups_name: str = Field(min_length=1, max_length=128),
+    id: int,
+    groups_name: str,
     groups: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
@@ -112,7 +112,7 @@ async def update_group(
     description="This API call function that delete group.",
 )
 async def delete_group(
-    groups_name: str = Field(min_length=1, max_length=128),
+    groups_name: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):

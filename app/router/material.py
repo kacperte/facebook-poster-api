@@ -8,7 +8,6 @@ from app.db import db_material
 from typing import List, Tuple
 from tempfile import NamedTemporaryFile
 from app.auth.oauth2 import get_current_user
-from pydantic import Field
 
 router = APIRouter(prefix="/material", tags=["material"])
 
@@ -26,10 +25,10 @@ def get_file_extension(file: UploadFile) -> Tuple[str, str]:
 
 
 def upload_file_to_s3_fastapi(
-    bucket_name: str = Field(min_length=1, max_length=128),
-    client_name: str = Field(min_length=1, max_length=128),
-    position_name: str = Field(min_length=1, max_length=128),
-    type_of_file: str = Field(min_length=1, max_length=128),
+    bucket_name: str,
+    client_name: str,
+    position_name: str,
+    type_of_file: str,
     file: UploadFile = File(...),
 ):
     """
@@ -85,9 +84,9 @@ def upload_file_to_s3_fastapi(
     response_model=MaterialDisplay,
 )
 async def create_material(
-    client: str = Field(min_length=1, max_length=128),
-    position: str = Field(min_length=1, max_length=128),
-    creator_id: int = Field(max_digits=3),
+    client: str,
+    position: str,
+    creator_id: int,
     db: Session = Depends(get_db),
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
@@ -139,7 +138,7 @@ async def get_all_materials(
     response_model=MaterialDisplay,
 )
 async def get_one_materials(
-    id: int = Field(max_digits=3),
+    id: int,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
@@ -153,7 +152,7 @@ async def get_one_materials(
     response_model=List[MaterialDisplay],
 )
 async def get_materials_by_client(
-    client: str = Field(min_length=1, max_length=128),
+    client: str,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
@@ -166,10 +165,10 @@ async def get_materials_by_client(
     description="This API call function that update material.",
 )
 async def update_material(
-    id: int = Field(max_digits=3),
-    client: str = Field(min_length=1, max_length=128),
-    position: str = Field(min_length=1, max_length=128),
-    creator_id: int = Field(max_digits=3),
+    id: int,
+    client: str,
+    position: str,
+    creator_id: int,
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -204,7 +203,7 @@ async def update_material(
     description="This API call function that delete material.",
 )
 async def delete_user(
-    id: int = Field(max_digits=3),
+    id: int,
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
