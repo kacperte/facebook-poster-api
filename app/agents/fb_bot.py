@@ -221,7 +221,7 @@ class FacebookPoster:
         self._time_patterns()
 
         # Locate postbox element and click it
-        element = WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH,
@@ -673,7 +673,7 @@ class FacebookPoster:
         :param selenium_element: A Selenium web element object representing the Facebook text box element.
         """
         # Find the text formatting buttons in the Facebook text box
-        text_modify_butttons = WebDriverWait(self.driver, 10).until(
+        text_modify_butttons = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, "//span[@class='x12mruv9 xfs2ol5 x1gslohp x12nagc']")
             )
@@ -818,7 +818,7 @@ class FacebookPoster:
             self._time_patterns()
 
             # Locate postbox element and click it
-            element = WebDriverWait(self.driver, 20).until(
+            element = WebDriverWait(self.driver, 30).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,

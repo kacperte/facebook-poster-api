@@ -21,6 +21,7 @@ services:
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
 
+
   selenium-hub:
     image: selenium/hub:latest
     container_name: selenium-hub
