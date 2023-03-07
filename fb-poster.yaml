@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fb-poster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fb-poster
+  template:
+    metadata:
+      labels:
+        app: fb-poster
+    spec:
+      containers:
+        - name: fb-poster
+          image: kacperte/fb-poster
+          command: ["bash", "-c"]
+          args:
+            - "celery -A app.tasks worker & uvicorn app.main:app --host 0.0.0.0 --reload"
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secret
+                  key: secret-key
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bot-secret
+                  key: access-key
+            - name: CELERY_BROKER_URL
+              value: "amqp://rabbitmq"
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+        - name: db
+          image: postgres
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: postgres
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+        - name: firefox
+          image: selenium/node-firefox:dev
+          env:
+            - name: SE_EVENT_BUS_HOST
+              value: selenium-hub
+            - name: SE_EVENT_BUS_PUBLISH_PORT
+              value: "4442"
+            - name: SE_EVENT_BUS_SUBSCRIBE_PORT
+              value: "4443"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
+        - name: selenium-hub
+          image: selenium/hub
+          env:
+            - name: GRID_BROWSER_TIMEOUT
+              value: "120000"
+            - name: GRID_TIMEOUT
+              value: "120000"
+            - name: GRID_NEW_SESSION_WAIT_TIMEOUT
+              value: "120000"
+          ports:
+            - containerPort: 4442
+            - containerPort: 4443
+            - containerPort: 4444
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fb-poster-service
+spec:
+  selector:
+    app: fb-poster
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
