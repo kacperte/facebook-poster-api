@@ -9,4 +9,3 @@ def create_logger(name: str, level=logging.INFO) -> logging.Logger:
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     return logger
-

@@ -15,9 +15,10 @@ spec:
       containers:
         - name: fb-poster
           image: kacperte/fb-poster
+          imagePullPolicy: IfNotPresent
           command: ["bash", "-c"]
           args:
-            - "celery -A app.tasks worker & uvicorn app.main:app --host 0.0.0.0 --reload"
+            - "celery -A app.tasks worker"
           env:
             - name: SECRET_KEY
               valueFrom:
@@ -39,6 +40,7 @@ spec:
               memory: 512Mi
         - name: db
           image: postgres
+          imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_USER
               value: postgres
@@ -47,13 +49,14 @@ spec:
             - name: POSTGRES_DB
               value: postgres
           ports:
-            - containerPort: 3000
+            - containerPort: 5432
           resources:
             limits:
               cpu: 500m
               memory: 512Mi
         - name: firefox
           image: selenium/node-firefox:dev
+          imagePullPolicy: IfNotPresent
           env:
             - name: SE_EVENT_BUS_HOST
               value: selenium-hub
@@ -67,6 +70,7 @@ spec:
               memory: 2Gi
         - name: selenium-hub
           image: selenium/hub
+          imagePullPolicy: IfNotPresent
           env:
             - name: GRID_BROWSER_TIMEOUT
               value: "120000"

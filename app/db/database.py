@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 # configuration for connecting to the database
 conf = {
-    "host": "db",
+    "host": "db-service",
     "port": "5432",
     "database": "postgres",
     "user": "postgres",
