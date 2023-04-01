@@ -95,14 +95,14 @@ async def create_material(
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
-        image=upload_file_to_s3_fastapi(
+        image_name=upload_file_to_s3_fastapi(
             bucket_name="heroku-fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
-        text=upload_file_to_s3_fastapi(
+        text_name=upload_file_to_s3_fastapi(
             bucket_name="heroku-fb-poster",
             client_name=client,
             position_name=position,

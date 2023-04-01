@@ -62,7 +62,7 @@ class FacebookPoster:
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
-            command_executor="http://selenium-hub:4444/wd/hub",
+            command_executor="http://selenium-hub-service:4444/wd/hub",
             desired_capabilities=DesiredCapabilities.FIREFOX,
             options=options,
         )

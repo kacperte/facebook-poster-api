@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.tasks import facebook_poster
 import requests
+import os
 import json
 from app.db import db_user
 from app.db.database import get_db
@@ -33,10 +34,11 @@ class ContentRequest(BaseModel):
 def send_content_to_fb_groups(
     db: Session = Depends(get_db), content_request: ContentRequest = None
 ):
+    URL = os.environ.get("HOST_IP")
     try:
         # Send a request to the token endpoint to authenticate the user
         response_token = requests.post(
-            url="http://localhost:8000/token",
+            url=URL + "token",
             data={
                 "grant_type": "password",
                 "username": content_request.login,
@@ -57,7 +59,7 @@ def send_content_to_fb_groups(
     try:
         # Send a request to the groups endpoint to retrieve a comma-separated list of group IDs
         response_groups = requests.get(
-            url=f"http://localhost:8000/groups/group/{content_request.groups_name}",
+            url=URL + f"groups/group/{content_request.groups_name}",
             headers=headers,
         )
         response_dict = response_groups.json()

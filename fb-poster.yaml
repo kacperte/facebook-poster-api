@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
         - name: fb-poster
-          image: kacperte/fb-poster:1.0.8
+          image: kacperte/fb-poster:1.0.10
           imagePullPolicy: IfNotPresent
           env:
             - name: SECRET_KEY
@@ -96,6 +96,8 @@ spec:
                 secretKeyRef:
                   name: bot-secret
                   key: access-key
+            - name: HOST_IP
+              value: "http://34.116.254.218:30002/"
           ports:
             - containerPort: 80
           resources:
