@@ -29,9 +29,9 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 2Gi
             requests:
-               memory: 256Mi
+               memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -62,9 +62,9 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 2Gi
             requests:
-               memory: 256Mi
+               memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -101,9 +101,9 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 2Gi
             requests:
-               memory: 256Mi
+               memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -171,9 +171,9 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 2Gi
             requests:
-               memory: 256Mi
+               memory: 1Gi
 
 ---
 apiVersion: v1
