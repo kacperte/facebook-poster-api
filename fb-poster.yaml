@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
         - name: fb-poster
-          image: kacperte/fb-poster:1.0.10
+          image: gcr.io/level-climber-382119/fb-poster:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: SECRET_KEY
@@ -97,7 +97,7 @@ spec:
                   name: bot-secret
                   key: access-key
             - name: HOST_IP
-              value: "http://34.116.254.218:30002/"
+              value: "http://34.116.171.18:30002/"
           ports:
             - containerPort: 80
           resources:

@@ -358,19 +358,21 @@ class FacebookPoster:
         :param human_simulation: Simulate human-like behavior during the login process.
         :return: None
         """
-        # Open Facebook at login page
+        #  # Open Facebook at login page
         self.driver.get(self.base_url)
-
         # Close cookie popup
-        cookie = WebDriverWait(self.driver, 30).until(
-            EC.element_to_be_clickable(
-                (
-                    By.XPATH,
-                    "//button[@data-cookiebanner='accept_button']",
+        try:
+            cookie = WebDriverWait(self.driver, 30).until(
+                EC.element_to_be_clickable(
+                    (
+                        By.XPATH,
+                        "//button[@data-cookiebanner='accept_button']",
+                    )
                 )
             )
-        )
-        cookie.click()
+            cookie.click()
+        except Exception as e:
+            logger.error(e)
 
         # For pausing the script for some time
         self._time_patterns()
