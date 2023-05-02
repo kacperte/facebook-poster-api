@@ -816,8 +816,7 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
-            print(self.driver.page_source, "aaa")
-            logger.info(self.driver.page_source, "bbb")
+            logger.info(self.driver.page_source)
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 30).until(
