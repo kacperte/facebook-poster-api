@@ -31,7 +31,7 @@ spec:
               cpu: 500m
               memory: 2Gi
             requests:
-               memory: 1Gi
+              memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -64,7 +64,7 @@ spec:
               cpu: 500m
               memory: 2Gi
             requests:
-               memory: 1Gi
+              memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -97,7 +97,7 @@ spec:
                   name: bot-secret
                   key: access-key
             - name: HOST_IP
-              value: "http://34.116.171.18:30002/"
+              value: http://34.116.171.18:30002/
           ports:
             - containerPort: 80
           resources:
@@ -105,7 +105,7 @@ spec:
               cpu: 500m
               memory: 2Gi
             requests:
-               memory: 1Gi
+              memory: 1Gi
 
 ---
 apiVersion: apps/v1
@@ -116,7 +116,7 @@ spec:
   selector:
     matchLabels:
       app: firefox
-  replicas: 2
+  replicas: 5
   template:
     metadata:
       labels:
@@ -134,14 +134,13 @@ spec:
             - name: SE_EVENT_BUS_SUBSCRIBE_PORT
               value: "4443"
             - name: SE_NODE_MAX_SESSIONS
-                value: "5"
+              value: "10"
           resources:
             limits:
               cpu: 500m
               memory: 2Gi
             requests:
-               memory: 1Gi
-
+              memory: 1Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -151,7 +150,7 @@ spec:
   selector:
     matchLabels:
       app: selenium-hub
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -163,11 +162,16 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: GRID_BROWSER_TIMEOUT
-              value: "120000"
+              value: "30000"
             - name: GRID_TIMEOUT
-              value: "120000"
+              value: "300000"
             - name: GRID_NEW_SESSION_WAIT_TIMEOUT
-              value: "120000"
+              value: "30000"
+            - name: POOL_MAX
+              value: "600000"
+            - name: GRID_MAX_SESSION
+              value: "10"
+
           ports:
             - containerPort: 4442
             - containerPort: 4443
@@ -177,7 +181,8 @@ spec:
               cpu: 500m
               memory: 2Gi
             requests:
-               memory: 1Gi
+              memory: 1Gi
+
 ---
 apiVersion: v1
 kind: Service

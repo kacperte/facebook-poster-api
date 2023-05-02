@@ -793,13 +793,11 @@ class FacebookPoster:
         self._time_patterns()
 
     def prepare_and_send_post(self, txt_name: str, img_name: str):
-
         # Log into Facebook
         self._login_to_facebook()
 
         counter = 0
         number = randint(3, 5)
-
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
@@ -818,6 +816,8 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
+            print(self.driver.page_source, "aaa")
+            logger.info(self.driver.page_source, "bbb")
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 30).until(
