@@ -17,6 +17,7 @@ from selenium.webdriver.common.keys import Keys
 import boto3
 from dotenv import load_dotenv
 from typing import Union
+from fake_useragent import UserAgent
 from .logger import create_logger
 
 load_dotenv()
@@ -55,14 +56,12 @@ class FacebookPoster:
         # Setup Selenium Options
         options = Options()
 
-        options.add_argument("--disable-blink-features=AutomationControlled")
+        ua = UserAgent()
+        user_agent = ua.random
+        options.add_argument(f'user-agent={user_agent}')
 
         # Add argument headless
         options.add_argument("--headless")
-        options.add_argument(
-            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/58.0.3029.110 Safari/537.3 "
-        )
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
@@ -803,7 +802,6 @@ class FacebookPoster:
         counter = 0
         number = randint(3, 5)
 
-        self._time_patterns(20)
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
@@ -821,7 +819,8 @@ class FacebookPoster:
             )
 
             # For pausing the script for sometime
-            self._time_patterns()
+            self._time_patterns(15)
+            logger.info(self.driver.page_source)
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 30).until(

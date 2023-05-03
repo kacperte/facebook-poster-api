@@ -67,3 +67,4 @@ wsproto==1.2.0
 rabbitmq
 pika
 pydantic[email]
+fake_useragent
