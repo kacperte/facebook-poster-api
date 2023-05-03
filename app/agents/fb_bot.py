@@ -417,8 +417,8 @@ class FacebookPoster:
         logger.info("Logged in to Facebook successfully")
 
         # Scroll the feed by 3 units to simulate human-like behavior
-        # if human_simulation:
-        #     self._scroll_feed(self.driver, 3)
+        if human_simulation:
+            self._scroll_feed(self.driver, 3)
 
     def _time_patterns(self, tp=None):
         """
@@ -802,10 +802,8 @@ class FacebookPoster:
 
         counter = 0
         number = randint(3, 5)
-        self._time_patterns()
-        logger.info(self.driver.page_source, '1')
-        print(self.driver.page_source, '1')
-        self._time_patterns()
+
+        self._time_patterns(20)
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
@@ -824,7 +822,6 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
-            logger.info(self.driver.page_source, '2')
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 30).until(
