@@ -804,6 +804,8 @@ class FacebookPoster:
         number = randint(3, 5)
         self._time_patterns()
         logger.info(self.driver.page_source, '1')
+        print(self.driver.page_source, '1')
+        self._time_patterns()
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
