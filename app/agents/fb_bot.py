@@ -59,6 +59,10 @@ class FacebookPoster:
 
         # Add argument headless
         options.add_argument("--headless")
+        options.add_argument(
+            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/58.0.3029.110 Safari/537.3 "
+        )
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
@@ -798,6 +802,8 @@ class FacebookPoster:
 
         counter = 0
         number = randint(3, 5)
+        self._time_patterns()
+        logger.info(self.driver.page_source, '1')
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
@@ -816,14 +822,14 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns()
-            logger.info(self.driver.page_source)
+            logger.info(self.driver.page_source, '2')
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 30).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,
-                        "//div[@class='x1i10hfl x6umtig x1b1mbwd xaqea5y xav7gou x9f619 x1ypdohk xe8uvvx xdj266r x11i5rnm xat24cr x1mh8g0r x16tdsg8 x1hl2dhg xggy1nq x87ps6o x1lku1pv x1a2a7pz x6s0dn4 xmjcpbm x107yiy2 xv8uw2v x1tfwpuw x2g32xy x78zum5 x1q0g3np x1iyjqo2 x1nhvcw1 x1n2onr6 xt7dq6l x1ba4aug x1y1aw1k xn6708d xwib8y2 x1ye3gou']",
+                        "//div[@class='x6s0dn4 x78zum5 x1l90r2v x1pi30zi x1swvt13 xz9dl7a']",
                     )
                 )
             )
