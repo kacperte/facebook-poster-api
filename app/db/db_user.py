@@ -41,7 +41,7 @@ def get_user(db: Session, mail: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {mail} not found",
         )
-    return user
+    return user.first()
 
 
 def get_user_by_name(db: Session, username: str):
@@ -54,7 +54,7 @@ def get_user_by_name(db: Session, username: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {username} not found",
         )
-    return user
+    return user.first()
 
 
 def update_user(db: Session, id: str, request: UserBase):
