@@ -22,6 +22,9 @@ async def create_user(
     db: Session = Depends(get_db),
     # current_user: UserBase = Depends(get_current_user),
 ):
+    if db_user.get_user_by_name(db,request.email):
+        raise HTTPException(status_code=409, detail="Username already in database")
+
     user = db_user.create_user(db, request)
 
     if not user.id:
