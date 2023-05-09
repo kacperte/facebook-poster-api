@@ -41,7 +41,7 @@ def get_user(db: Session, mail: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {mail} not found",
         )
-    return user.first()
+    return user
 
 
 def get_user_by_name(db: Session, username: str):
@@ -54,7 +54,15 @@ def get_user_by_name(db: Session, username: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {username} not found",
         )
-    return user.first()
+    return user
+
+
+def check_duplicate(db: Session, username: str):
+    """
+    Get one user by username to check if it is duplicate.
+    """
+    user = db.query(DbUser).filter(DbUser.username == username).first()
+    return user
 
 
 def update_user(db: Session, id: str, request: UserBase):
@@ -75,7 +83,7 @@ def update_user(db: Session, id: str, request: UserBase):
         }
     )
     db.commit()
-    return user.first()
+    return user
 
 
 def delete_user(db: Session, id: str):
