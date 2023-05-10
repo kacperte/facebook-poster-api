@@ -413,7 +413,6 @@ class FacebookPoster:
             EC.presence_of_element_located((By.ID, "facebook"))
         )
 
-        logger.info(self.driver.page_source)
         logger.info("Logged in to Facebook successfully")
 
         # Scroll the feed by 3 units to simulate human-like behavior

@@ -1,0 +1,16 @@
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: firefox
+  minReplicas: 5
+  maxReplicas: 100
+  metrics:
+    - type: Pods
+      pods:
+        metricName: available-pods
+        targetAverageValue: 60

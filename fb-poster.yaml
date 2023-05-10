@@ -84,7 +84,7 @@ spec:
       containers:
         - name: fb-poster
           image: gcr.io/level-climber-382119/fb-poster:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: SECRET_KEY
               valueFrom:
@@ -116,7 +116,7 @@ spec:
   selector:
     matchLabels:
       app: firefox
-  replicas: 10
+  replicas: 5
   template:
     metadata:
       labels:
