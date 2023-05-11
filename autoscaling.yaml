@@ -10,7 +10,7 @@ spec:
   minReplicas: 5
   maxReplicas: 100
   metrics:
-    - type: Pods
-      pods:
-        metricName: available-pods
-        targetAverageValue: 60
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 70
