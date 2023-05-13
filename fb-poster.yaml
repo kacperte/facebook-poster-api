@@ -135,14 +135,6 @@ spec:
               value: "4443"
             - name: SE_NODE_MAX_SESSIONS
               value: "10"
-          command:
-            - /bin/bash
-            - "-c"
-            - >
-              exec /opt/bin/entry_point.sh
-              --debug
-              --register-caps "browserName=firefox,platform=WINDOWS"
-              ${JAVA_OPTS} ${SE_OPTS}
           resources:
             limits:
               cpu: 500m
