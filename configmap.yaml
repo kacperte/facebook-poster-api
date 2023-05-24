@@ -10,7 +10,7 @@ data:
       evaluation_interval: 15s
 
     scrape_configs:
-      - job_name: 'selenoid-exporter'
+      - job_name: 'selenium-hub'
         static_configs:
           - targets: ['selenium-hub-export-service:9104']
 
