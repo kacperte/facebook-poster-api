@@ -171,7 +171,6 @@ spec:
               value: "600000"
             - name: GRID_MAX_SESSION
               value: "10"
-
           ports:
             - containerPort: 4442
             - containerPort: 4443
@@ -182,7 +181,59 @@ spec:
               memory: 2Gi
             requests:
               memory: 1Gi
+        - name: selenium-hub-export
+          image: gmichels/selenium-grid-exporter:v1.0.0
+          command: [ "python", "./exporter.py" ]
+          args:
+            - "--grid-url=http://selenium-hub-service:4444"
+            - "--metrics-port=9104"
+            - "--publish-interval=300"
+          ports:
+            - containerPort: 9104
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus
+          args:
+            - '--storage.tsdb.retention=6h'
+            - '--storage.tsdb.path=/prometheus'
+            - '--config.file=/etc/prometheus/prometheus.yml'
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus/
+            - name: data-volume
+              mountPath: /prometheus
+      volumes:
+        - name: config-volume
+          configMap:
+            name: prometheus-config
+        - name: data-volume
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -253,6 +304,20 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: selenium-hub-export-service
+spec:
+  selector:
+    app: selenium-hub
+  ports:
+    - protocol: TCP
+      port: 9104
+      targetPort: 9104
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: firefox-service
 spec:
   selector:
@@ -262,3 +327,45 @@ spec:
       port: 5900
       targetPort: 5900
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: firefox-monitor
+  labels:
+    app: firefox
+spec:
+  selector:
+    matchLabels:
+      app: firefox
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+spec:
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app: firefox
+  resources:
+    requests:
+      memory: 400Mi
+  enableAdminAPI: true

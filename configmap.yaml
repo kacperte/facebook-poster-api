@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: default
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    scrape_configs:
+      - job_name: 'selenoid-exporter'
+        static_configs:
+          - targets: ['selenium-hub-export-service:9104']
+
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['prometheus-service:9090']
