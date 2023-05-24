@@ -344,13 +344,13 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: firefox-monitor
+  name: selenium-hub-monitor
   labels:
-    app: firefox
+    app: selenium-hub
 spec:
   selector:
     matchLabels:
-      app: firefox
+      app: selenium-hub
   endpoints:
     - port: metrics
       path: /metrics
@@ -364,7 +364,7 @@ spec:
   serviceAccountName: prometheus
   serviceMonitorSelector:
     matchLabels:
-      app: firefox
+      app: selenium-hub
   resources:
     requests:
       memory: 400Mi
