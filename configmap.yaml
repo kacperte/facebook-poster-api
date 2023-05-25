@@ -17,3 +17,10 @@ data:
       - job_name: 'prometheus'
         static_configs:
           - targets: ['prometheus-service:9090']
+
+  custom.rules: |
+    groups:
+      - name: custom.rules
+        rules:
+          - record: free_nodes_percentage
+            expr: 100 * (selenium_grid_node_count - selenium_grid_session_count) / selenium_grid_node_count
