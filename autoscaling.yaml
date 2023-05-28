@@ -10,9 +10,14 @@ spec:
   minReplicas: 5
   maxReplicas: 100
   metrics:
-    - type: Resource
-      resource:
-        name: cpu
+    - type: Object
+      object:
+        metric:
+          name: free_nodes_percentage
+        describedObject:
+          apiVersion: v1
+          kind: Service
+          name: prometheus-service
         target:
-          type: Utilization
-          averageUtilization: 70
+          type: Value
+          value: 30

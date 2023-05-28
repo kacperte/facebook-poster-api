@@ -235,6 +235,36 @@ spec:
         - name: data-volume
           emptyDir: {}
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-adapter
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-adapter
+  template:
+    metadata:
+      labels:
+        app: prometheus-adapter
+    spec:
+      containers:
+        - name: prometheus-adapter
+          image: directxman12/k8s-prometheus-adapter:v0.8.4
+          args:
+            - "--prometheus-url=prometheus-service:9090"
+          ports:
+            - containerPort: 6443
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -341,31 +371,44 @@ spec:
       targetPort: 9090
   type: ClusterIP
 ---
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+apiVersion: v1
+kind: Service
 metadata:
-  name: selenium-hub-monitor
-  labels:
-    app: selenium-hub
+  name: prometheus-adapter
 spec:
+  ports:
+    - name: https
+      port: 443
+      targetPort: 6443
   selector:
-    matchLabels:
-      app: selenium-hub
-  endpoints:
-    - port: metrics
-      path: /metrics
-      interval: 10s
+    app: prometheus-adapter
 ---
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: prometheus
-spec:
-  serviceAccountName: prometheus
-  serviceMonitorSelector:
-    matchLabels:
-      app: selenium-hub
-  resources:
-    requests:
-      memory: 400Mi
-  enableAdminAPI: true
+#apiVersion: monitoring.coreos.com/v1
+#kind: ServiceMonitor
+#metadata:
+#  name: selenium-hub-monitor
+#  labels:
+#    app: selenium-hub
+#spec:
+#  selector:
+#    matchLabels:
+#      app: selenium-hub-export-service
+#  endpoints:
+#    - port: metrics
+#      path: /metrics
+#      interval: 10s
+#---
+#apiVersion: monitoring.coreos.com/v1
+#kind: Prometheus
+#metadata:
+#  name: prometheus
+#spec:
+#  serviceAccountName: prometheus
+#  serviceMonitorSelector:
+#    matchLabels:
+#      app: selenium-hub-export-service
+#  resources:
+#    requests:
+#      memory: 400Mi
+#  enableAdminAPI: true
+#---
