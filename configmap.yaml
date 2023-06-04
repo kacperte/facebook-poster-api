@@ -27,3 +27,16 @@ data:
         rules:
           - record: free_nodes_percentage
             expr: 100 * (selenium_grid_node_count - selenium_grid_session_count) / selenium_grid_node_count
+
+  config.yml: |
+    rules:
+      - seriesQuery: 'free_nodes_percentage'
+        resources:
+          overrides:
+            kubernetes_namespace:
+              resource: namespace
+            kubernetes_pod_name:
+              resource: pod
+        name:
+          matches: "free_nodes_percentage"
+  
