@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: custom-metrics-auth-reader
-  namespace: default
+  namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -10,7 +10,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cluster-monitoring
-  namespace: default
+  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -23,4 +23,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cluster-monitoring
-  namespace: default
+  namespace: kube-system
