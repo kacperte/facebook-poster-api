@@ -70,20 +70,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fb-poster
+  name: fb-poster-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fb-poster
+      app: fb-poster-api
   template:
     metadata:
       labels:
-        app: fb-poster
+        app: fb-poster-api
     spec:
       containers:
-        - name: fb-poster
-          image: gcr.io/level-climber-382119/fb-poster:latest
+        - name: fb-poster-api
+          image: gcr.io/alien-device-389315/fb-poster:latest
           imagePullPolicy: Always
           env:
             - name: SECRET_KEY
@@ -146,7 +146,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: selenium-hub
-  namespace: default
+  namespace: fb-poster
 spec:
   selector:
     matchLabels:
@@ -204,7 +204,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  namespace: default
+  namespace: fb-poster
 spec:
   replicas: 1
   selector:
@@ -239,30 +239,35 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-adapter
-  namespace: default
+  name: prometheus-adapter-monitor
+  labels:
+    app: prometheus-adapter-monitor
+  namespace: fb-poster
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prometheus-adapter
+      app: prometheus-adapter-monitor
   template:
     metadata:
       labels:
-        app: prometheus-adapter
-      name: prometheus-adapter
+        app: prometheus-adapter-monitor
+      name: prometheus-adapter-monitor
     spec:
+
+      serviceAccountName: cluster-monitoring
       containers:
-        - name: prometheus-adapter
-          image: directxman12/k8s-prometheus-adapter:v0.8.4
+        - name: prometheus-adapter-monitor
+          image: directxman12/k8s-prometheus-adapter-amd64:v0.5.0
           args:
             - "--secure-port=6443"
+            - "--tls-cert-file=/var/run/serving-cert/serving.crt"
+            - "--tls-private-key-file=/var/run/serving-cert/serving.key"
             - "--logtostderr=true"
             - "--metrics-relist-interval=1m"
             - "--prometheus-url=http://prometheus-service:9090"
+            - "--v=10"
             - "--config=etc/adapter/config.yml"
-            - "--tls-cert-file=/var/run/serving-cert/serving.crt"
-            - "--tls-private-key-file=/var/run/serving-cert/serving.key"
           ports:
             - containerPort: 6443
           volumeMounts:
@@ -290,7 +295,7 @@ metadata:
   name: fb-poster-service
 spec:
   selector:
-    app: fb-poster
+    app: fb-poster-api
   type: NodePort
   ports:
     - protocol: TCP
@@ -393,14 +398,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-adapter-service
-  namespace: default
+  name: prometheus-adapter-monitor
+  namespace: fb-poster
 spec:
   ports:
     - port: 443
       targetPort: 6443
   selector:
-    app: prometheus-adapter
+    app: prometheus-adapter-monitor
 ---
 apiVersion: apiregistration.k8s.io/v1
 kind: APIService
@@ -408,8 +413,8 @@ metadata:
   name: v1.custom.metrics.k8s.io
 spec:
   service:
-    name: prometheus-adapter-service
-    namespace: default
+    name: prometheus-adapter-monitor
+    namespace: fb-poster
   group: custom.metrics.k8s.io
   version: v1
   insecureSkipTLSVerify: true

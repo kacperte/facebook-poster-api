@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
-  namespace: default
+  namespace: fb-poster
 data:
   prometheus.yml: |
     global:
@@ -30,7 +30,7 @@ data:
 
   config.yml: |
     rules:
-      - seriesQuery: 'selenium_grid_node_count'
+      - seriesQuery: 'free_nodes_percentage'
         resources:
           overrides:
             kubernetes_namespace:
@@ -38,7 +38,5 @@ data:
             kubernetes_pod_name:
               resource: pod
         name:
-          matches: "selenium_grid_node_count"
-          as: ""
-        metricsQuery: (sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>))
+          matches: "free_nodes_percentage"
   
