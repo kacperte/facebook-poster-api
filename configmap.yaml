@@ -33,10 +33,11 @@ data:
       - seriesQuery: 'free_nodes_percentage'
         resources:
           overrides:
-            kubernetes_namespace:
-              resource: namespace
-            kubernetes_pod_name:
-              resource: pod
+            kubernetes_namespace: {resource: "namespace"}
+            kubernetes_pod_name: {resource: "pod"}
         name:
           matches: "free_nodes_percentage"
+         
+        
+
   
