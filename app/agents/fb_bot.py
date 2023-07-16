@@ -832,11 +832,11 @@ class FacebookPoster:
             )
             element.click()
 
-            # For pausing the script for sometime
-            self._time_patterns()
-
             # Activate postbox pop up to send value to it
             postbox = self.driver.switch_to.active_element
+
+            # For pausing the script for sometime
+            self._time_patterns(10)
 
             # Load content from file
             content = self.get_txt(content)
