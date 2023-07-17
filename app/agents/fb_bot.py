@@ -61,7 +61,7 @@ class FacebookPoster:
         options.add_argument(f'user-agent={user_agent}')
 
         # Add argument headless
-        options.add_argument("--headless")
+        #options.add_argument("--headless")
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
@@ -677,12 +677,16 @@ class FacebookPoster:
         :param content: The string to be sent to the Facebook text box
         :param selenium_element: A Selenium web element object representing the Facebook text box element.
         """
+        selenium_element.send_keys("A")
+        self.action.key_down(Keys.SHIFT).send_keys(Keys.LEFT).perform()
         # Find the text formatting buttons in the Facebook text box
         text_modify_butttons = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, "//span[@class='x12mruv9 xfs2ol5 x1gslohp x12nagc']")
             )
         )
+        selenium_element.send_keys(Keys.BACKSPACE)
+        self.action.reset_actions()
         # Initialize empty lists to store text formatting actions for text without bold and italic formatting,
         # and text with only bold and italic formatting
         list_of_action_to_do_with_text_without_bold_and_italic = list()
@@ -833,7 +837,7 @@ class FacebookPoster:
             element.click()
 
             # Activate postbox pop up to send value to it
-            postbox = self.driver.switch_to.active_element
+            # postbox = self.driver.switch_to.active_element
 
             # For pausing the script for sometime
             self._time_patterns(10)
@@ -843,6 +847,7 @@ class FacebookPoster:
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
+                postbox = self.driver.switch_to.active_element
                 self.send_text(content=line, selenium_element=postbox)
 
             # Add images to post
