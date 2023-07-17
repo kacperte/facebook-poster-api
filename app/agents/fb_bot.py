@@ -562,7 +562,7 @@ class FacebookPoster:
                 self.action.reset_actions()
 
                 # For pausing the script for some time
-                self._time_patterns()
+                self._time_patterns(2)
 
                 # Unselect the selected characters
                 selenium_element.send_keys(Keys.RIGHT)
@@ -572,7 +572,7 @@ class FacebookPoster:
                 self.action.reset_actions()
 
                 # For pausing the script for some time
-                self._time_patterns()
+                self._time_patterns(2)
 
                 # Check if we back to correct  place - if not correct it
                 self.move_cursor(
@@ -617,7 +617,7 @@ class FacebookPoster:
                 )
 
                 # For pausing the script for some time
-                self._time_patterns()
+                self._time_patterns(2)
 
                 # Calculate steps to move
                 k = (action[1] - action[0]) + (action[0] + n_to_move_1)
@@ -630,7 +630,7 @@ class FacebookPoster:
                 self.action.reset_actions()
 
                 # For pausing the script for some time
-                self._time_patterns()
+                self._time_patterns(2)
 
                 # Press and hold SHIFT and move cursor by n places to right
                 self.action.key_down(Keys.SHIFT).send_keys(
@@ -650,9 +650,6 @@ class FacebookPoster:
                 # Move back to the start of the line (after this, we reset action chain)
                 self.action.send_keys(Keys.LEFT * (int(action[1]))).perform()
                 self.action.reset_actions()
-
-                # For pausing the script for some time
-                self._time_patterns()
 
                 # Check if we back to correct place - if not correct it
                 self.move_cursor(
@@ -737,7 +734,7 @@ class FacebookPoster:
             self.action.reset_actions()
 
             # For pausing the script for some time
-            self._time_patterns()
+            self._time_patterns(2)
             # Iterate through actions in `list_of_actions_without_bold_and_italic` and click the corresponding button
             # to trigger the action
             for action in list_of_action_to_do_with_text_without_bold_and_italic:
@@ -765,7 +762,7 @@ class FacebookPoster:
                 n_for_end_and_position=n_to_move,
             )
             # For pausing the script for some time
-            self._time_patterns()
+            self._time_patterns(3)
 
             # Move the cursor to the end of the line
             selenium_element.send_keys(Keys.RIGHT * n)
@@ -777,7 +774,7 @@ class FacebookPoster:
                 n_for_end_and_position=n_to_move,
             )
             # For pausing the script for some time
-            self._time_patterns()
+            self._time_patterns(2)
 
             # If the last word was bold or italic, turn off the formatting before creating a new line
             if is_formatting:
@@ -809,7 +806,7 @@ class FacebookPoster:
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
-            logger.info(f"/// Start processing group: {group + 'buy_sell_discussion'}")
+            logger.info(f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}")
 
             # Load imgage from s3 AWS
             image = self.get_from_aws(
@@ -836,17 +833,12 @@ class FacebookPoster:
             )
             element.click()
 
-            # Activate postbox pop up to send value to it
-            # postbox = self.driver.switch_to.active_element
-
-            # For pausing the script for sometime
-            self._time_patterns(10)
-
             # Load content from file
             content = self.get_txt(content)
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
+                # Activate postbox pop up to send value to it
                 postbox = self.driver.switch_to.active_element
                 self.send_text(content=line, selenium_element=postbox)
 
@@ -861,20 +853,20 @@ class FacebookPoster:
             file_input.send_keys("temp.jpg")
 
             # For pausing the script for sometime
-            self._time_patterns()
+            self._time_patterns(2)
 
             # Click post button
             self.driver.find_element(By.XPATH, "//div[@aria-label='Opublikuj']").click()
 
             # For pausing the script for sometime
-            self._time_patterns()
+            self._time_patterns(2)
 
             if counter % number:
                 self.driver.get(self.base_url)
-                self._time_patterns()
+                self._time_patterns(2)
                 self._scroll_feed(self.driver, 5)
 
             counter += 1
-            logger.info(f"/// End processing group: {group + 'buy_sell_discussion'}")
+            logger.info(f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}")
 
         self.driver.quit()
