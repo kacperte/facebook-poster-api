@@ -1,4 +1,5 @@
 import os
+from google.cloud import storage
 import time
 import logging
 import re
@@ -172,30 +173,21 @@ class FacebookPoster:
             i += 1
 
     @staticmethod
-    def get_from_aws(file_name: str, bucket_name: str):
+    def get_from_gcp_storage(file_name: str, bucket_name: str):
         """
-        This method retrieves the content of a file stored on AWS S3 bucket.
-        :param file_name: str - name of the file in the S3 bucket
-        :param bucket_name: str - name of the S3 bucket
+        This method retrieves the content of a file stored on GCP Storage bucket.
+        :param file_name: str - name of the file in the GCP Storage bucket
+        :param bucket_name: str - name of the GCP Storage bucket
         :return: str - content of the file
         """
-        # retrieve access and secret key from environment variables
-        access_key = os.environ.get("ACCESS_KEY")
-        secret_key = os.environ.get("SECRET_KEY")
 
-        # create a boto3 session using the access and secret key
-        session = boto3.Session(
-            aws_access_key_id=access_key, aws_secret_access_key=secret_key
-        )
-        # create an S3 resource using the session
-        s3 = session.resource("s3")
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/var/secrets/google/key.json"
+        storage_client = storage.Client()
 
-        # create an S3 object to access the specified file in the specified bucket
-        obj = s3.Object(bucket_name, file_name)
-        # retrieve the content of the file and decode it as utf-8
-        content = obj.get()["Body"].read()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_name)
+        content = blob.download_as_bytes()
 
-        # return the content of the file
         return content
 
     def create_selenium_object_for_testing(self, content, direction=None):
@@ -809,13 +801,13 @@ class FacebookPoster:
             logger.info(f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}")
 
             # Load imgage from s3 AWS
-            image = self.get_from_aws(
+            image = self.get_from_gcp_storage(
                 file_name=img_name,
                 bucket_name=self.bucket_name,
             )
 
             # Load txt_file from s3 AWS
-            content = self.get_from_aws(
+            content = self.get_from_gcp_storage(
                 file_name=txt_name, bucket_name=self.bucket_name
             )
 
