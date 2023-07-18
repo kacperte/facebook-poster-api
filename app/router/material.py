@@ -1,4 +1,4 @@
-import boto3
+from google.cloud import storage
 import os
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from app.schemas import MaterialBase, MaterialDisplay, UserBase
@@ -11,11 +11,8 @@ from app.auth.oauth2 import get_current_user
 
 router = APIRouter(prefix="/material", tags=["material"])
 
-s3_client = boto3.client(
-    "s3",
-    aws_access_key_id=os.getenv("ACCESS_KEY"),
-    aws_secret_access_key=os.getenv("SECRET_KEY"),
-)
+# Initialize a storage client
+storage_client = storage.Client()
 
 
 def get_file_extension(file: UploadFile) -> Tuple[str, str]:
@@ -66,10 +63,13 @@ def upload_file_to_s3_fastapi(
     finally:
         file.file.close()
 
-    # upload to s3
+    # get bucket with name
+    bucket = storage_client.get_bucket(bucket_name)
+
+    # upload to GCS
     try:
-        with open(temp.name, "rb") as data:
-            s3_client.upload_fileobj(data, bucket_name, upload_path)
+        blob = bucket.blob(upload_path)
+        blob.upload_from_filename(temp.name)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"There was an error uploading the file - {e}"
@@ -96,14 +96,14 @@ async def create_material(
         client=client.lower(),
         position=position.lower(),
         image_name=upload_file_to_s3_fastapi(
-            bucket_name="heroku-fb-poster",
+            bucket_name="fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text_name=upload_file_to_s3_fastapi(
-            bucket_name="heroku-fb-poster",
+            bucket_name="fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="copy",
@@ -178,14 +178,14 @@ async def update_material(
         client=client.lower(),
         position=position.lower(),
         image=upload_file_to_s3_fastapi(
-            bucket_name="heroku-fb-poster",
+            bucket_name="fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text=upload_file_to_s3_fastapi(
-            bucket_name="heroku-fb-poster",
+            bucket_name="fb-poster",
             client_name=client.lower(),
             position_name=position.lower(),
             type_of_file="copy",
