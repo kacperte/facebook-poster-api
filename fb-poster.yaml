@@ -86,18 +86,11 @@ spec:
           image: gcr.io/pelagic-plexus-391019/fb-poster:latest
           imagePullPolicy: Always
           env:
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: bot-secret
-                  key: secret-key
-            - name: ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: bot-secret
-                  key: access-key
             - name: HOST_IP
               value: http://34.116.171.18:30002/
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
           ports:
             - containerPort: 80
           resources:
@@ -106,6 +99,10 @@ spec:
               memory: 2Gi
             requests:
               memory: 1Gi
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: iam-storage
 ---
 apiVersion: apps/v1
 kind: Deployment

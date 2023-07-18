@@ -11,8 +11,8 @@ def create_material(db: Session, request: MaterialBase):
     new_group_post = DbMaterial(
         client=request.client,
         position=request.position,
-        image=request.image,
-        text=request.text,
+        image_name=request.image_name,
+        text_name=request.text_name,
         user_id=request.creator_id,
     )
     db.add(new_group_post)
@@ -68,8 +68,8 @@ def update_material(db: Session, id: int, request: MaterialBase):
         {
             DbMaterial.client: request.client,
             DbMaterial.position: request.position,
-            DbMaterial.image: request.image,
-            DbMaterial.text: request.text,
+            DbMaterial.image: request.image_name,
+            DbMaterial.text: request.text_name,
         }
     )
     db.commit()

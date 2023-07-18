@@ -12,6 +12,7 @@ from app.auth.oauth2 import get_current_user
 router = APIRouter(prefix="/material", tags=["material"])
 
 # Initialize a storage client
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/var/secrets/google/key.json"
 storage_client = storage.Client()
 
 
@@ -21,7 +22,7 @@ def get_file_extension(file: UploadFile) -> Tuple[str, str]:
     return filename, file_extension
 
 
-def upload_file_to_s3_fastapi(
+def upload_file_to_gcp_storage_fastapi(
     bucket_name: str,
     client_name: str,
     position_name: str,
@@ -92,17 +93,18 @@ async def create_material(
     text_content: UploadFile = File(...),
     current_user: UserBase = Depends(get_current_user),
 ):
+
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
-        image_name=upload_file_to_s3_fastapi(
+        image_name=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
-        text_name=upload_file_to_s3_fastapi(
+        text_name=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster",
             client_name=client,
             position_name=position,
@@ -177,14 +179,14 @@ async def update_material(
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
-        image=upload_file_to_s3_fastapi(
+        image=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
-        text=upload_file_to_s3_fastapi(
+        text=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster",
             client_name=client.lower(),
             position_name=position.lower(),

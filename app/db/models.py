@@ -18,8 +18,8 @@ class DbMaterial(Base):
     id = Column(Integer, primary_key=True, index=True)
     client = Column(String)
     position = Column(String)
-    image = Column(String)
-    text = Column(String)
+    image_name = Column(String)
+    text_name = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("DbUser", back_populates="items")
 
