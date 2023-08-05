@@ -15,7 +15,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-import boto3
 from dotenv import load_dotenv
 from typing import Union
 from fake_useragent import UserAgent
@@ -59,10 +58,10 @@ class FacebookPoster:
 
         ua = UserAgent()
         user_agent = ua.random
-        options.add_argument(f'user-agent={user_agent}')
+        options.add_argument(f"user-agent={user_agent}")
 
         # Add argument headless
-        #options.add_argument("--headless")
+        # options.add_argument("--headless")
 
         # Setup Firefox driver
         self.driver = webdriver.Remote(
@@ -78,7 +77,7 @@ class FacebookPoster:
         self.time_pattern = randint(3, 5)  # seconds
 
         # Bukcet name
-        self.bucket_name = "heroku-fb-poster"
+        self.bucket_name = "fb-poster"
 
         # Dict with text format action
         self.text_formatting_action = {
@@ -798,7 +797,9 @@ class FacebookPoster:
         for group in self.groups:
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
-            logger.info(f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}")
+            logger.info(
+                f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}"
+            )
 
             # Load imgage from s3 AWS
             image = self.get_from_gcp_storage(
@@ -815,7 +816,7 @@ class FacebookPoster:
             self._time_patterns()
 
             # Locate postbox element and click it
-            element = WebDriverWait(self.driver, 30).until(
+            element = WebDriverWait(self.driver, 60).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,
@@ -828,10 +829,13 @@ class FacebookPoster:
             # Load content from file
             content = self.get_txt(content)
 
+            self._time_patterns(20)
+
             #  Iterate through content file and add text
             for line in content.split("\n"):
                 # Activate postbox pop up to send value to it
                 postbox = self.driver.switch_to.active_element
+                self._time_patterns()
                 self.send_text(content=line, selenium_element=postbox)
 
             # Add images to post
@@ -859,6 +863,8 @@ class FacebookPoster:
                 self._scroll_feed(self.driver, 5)
 
             counter += 1
-            logger.info(f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}")
+            logger.info(
+                f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}"
+            )
 
         self.driver.quit()

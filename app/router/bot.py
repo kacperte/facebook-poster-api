@@ -3,7 +3,7 @@ from app.tasks import facebook_poster
 import requests
 import os
 import json
-from app.db import db_user
+from app.db import db_user, db_material
 from app.db.database import get_db
 from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
@@ -24,6 +24,7 @@ class ContentRequest(BaseModel):
     password: str = Field(min_length=1, max_length=128)
     email: EmailStr
     groups_name: str = Field(min_length=1, max_length=128)
+    material_id: int = Field(gt=0, lt=1000)
 
 
 @router.post(
@@ -75,6 +76,11 @@ def send_content_to_fb_groups(
         raise HTTPException(status_code=404, detail="User not found")
 
     try:
+        material = db_material.get_material(db, content_request.material_id)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Material not found")
+
+    try:
         # Attempt to retrieve the user from the database using the specified email address
         password = user.password
         enc_pass = Hash(secret_key).decrypt_password(password)
@@ -85,6 +91,10 @@ def send_content_to_fb_groups(
 
     # Use Celery to asynchronously send content to the specified Facebook groups
     task = facebook_poster.delay(
-        login=content_request.email, password=enc_pass, groups=groups
+        login=content_request.email,
+        password=enc_pass,
+        groups=groups,
+        image_name=material.image_name,
+        text_name=material.text_name,
     )
     return {"task_id": task.id}
