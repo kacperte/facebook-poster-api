@@ -95,10 +95,10 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 1000m
+              memory: 4Gi
             requests:
-              memory: 1Gi
+              memory: 4Gi
       volumes:
         - name: google-cloud-key
           secret:
@@ -112,7 +112,7 @@ spec:
   selector:
     matchLabels:
       app: firefox
-  replicas: 5
+  replicas: 1
   template:
     metadata:
       labels:
@@ -133,10 +133,10 @@ spec:
               value: "10"
           resources:
             limits:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 1000m
+              memory: 4Gi
             requests:
-              memory: 1Gi
+              memory: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -173,10 +173,10 @@ spec:
             - containerPort: 4444
           resources:
             limits:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 1000m
+              memory: 4Gi
             requests:
-              memory: 1Gi
+              memory: 2Gi
         - name: selenium-hub-export
           image: gmichels/selenium-grid-exporter:v1.0.0
           command: [ "python", "./exporter.py" ]

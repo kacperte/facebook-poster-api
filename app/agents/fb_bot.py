@@ -791,6 +791,25 @@ class FacebookPoster:
         # Log into Facebook
         self._login_to_facebook()
 
+        # Load imgage from s3 AWS
+        image = self.get_from_gcp_storage(
+            file_name=img_name,
+            bucket_name=self.bucket_name,
+        )
+
+        # Save the image to a temporary file
+        with open("temp.jpg", "wb") as f:
+            image_content = self.get_image(image)
+            image_content.save(f, format="JPEG")
+
+        # Load txt_file from s3 AWS
+        content = self.get_from_gcp_storage(
+            file_name=txt_name, bucket_name=self.bucket_name
+        )
+
+        # Load content from file
+        content = self.get_txt(content)
+
         counter = 0
         number = randint(3, 5)
 
@@ -799,17 +818,6 @@ class FacebookPoster:
             self.driver.get(group + "buy_sell_discussion")
             logger.info(
                 f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}"
-            )
-
-            # Load imgage from s3 AWS
-            image = self.get_from_gcp_storage(
-                file_name=img_name,
-                bucket_name=self.bucket_name,
-            )
-
-            # Load txt_file from s3 AWS
-            content = self.get_from_gcp_storage(
-                file_name=txt_name, bucket_name=self.bucket_name
             )
 
             # For pausing the script for sometime
@@ -826,9 +834,6 @@ class FacebookPoster:
             )
             element.click()
 
-            # Load content from file
-            content = self.get_txt(content)
-
             self._time_patterns(20)
 
             #  Iterate through content file and add text
@@ -841,10 +846,6 @@ class FacebookPoster:
             # Add images to post
             driver = element.parent
             file_input = driver.execute_script(self.js_code, postbox, 0, 0)
-            # Save the image to a temporary file
-            image = self.get_image(image)
-            with open("temp.jpg", "wb") as f:
-                image.save(f, format="JPEG")
 
             file_input.send_keys("temp.jpg")
 
@@ -855,12 +856,13 @@ class FacebookPoster:
             self.driver.find_element(By.XPATH, "//div[@aria-label='Opublikuj']").click()
 
             # For pausing the script for sometime
-            self._time_patterns(2)
+            self._time_patterns(10)
 
             if counter % number:
                 self.driver.get(self.base_url)
-                self._time_patterns(2)
+                self._time_patterns(5)
                 self._scroll_feed(self.driver, 5)
+                self._time_patterns(5)
 
             counter += 1
             logger.info(
