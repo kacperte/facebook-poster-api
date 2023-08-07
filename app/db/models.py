@@ -1,5 +1,5 @@
 from app.db.database import Base
-from sqlalchemy import Column, Integer, LargeBinary, String
+from sqlalchemy import Column, Integer, LargeBinary, String, DateTime, JSON
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -29,3 +29,11 @@ class DbGroups(Base):
     id = Column(Integer, primary_key=True, index=True)
     groups_name = Column(String)
     groups = Column(String)
+
+
+class DbJobStatus(Base):
+    __tablename__ = "job_status"
+    id = Column(String, primary_key=True, index=True)
+    date = Column(DateTime)
+    groups_to_procced = Column(JSON)
+
