@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
+from datetime import datetime
 
 
 class Material(BaseModel):
@@ -69,3 +70,9 @@ class GroupsDisplay(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class JobStatusBase(BaseModel):
+    id: str
+    date: datetime
+    groups_to_procced: Dict
