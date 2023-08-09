@@ -3,12 +3,15 @@ from app.tasks import facebook_poster
 import requests
 import os
 import json
-from app.db import db_user, db_material
+from app.db import db_user, db_material, db_job_status
 from app.db.database import get_db
 from sqlalchemy.orm.session import Session
 from app.config import SECRET_KEY_HASH
 from app.db.hash import Hash
 from pydantic import BaseModel, EmailStr, Field
+import uuid
+from ..schemas import JobStatusBase
+from datetime import datetime
 
 
 # Load the secret key hash from the app configuration
@@ -89,12 +92,25 @@ def send_content_to_fb_groups(
         # error message
         raise HTTPException(status_code=500, detail="Error decrypting password")
 
+    # Create unique string
+    unique_string = str(uuid.uuid4())
+
+    # Label groups with Label the groups with "non-processed"
+    label_groups = {x: "non-processed" for x in groups}
+
+    job_status_to_add = JobStatusBase(
+        id=unique_string,
+        date=datetime.now(),
+        groups_to_procced=label_groups
+    )
+    db_job_status.create_job_status(db, job_status_to_add)
+
     # Use Celery to asynchronously send content to the specified Facebook groups
     task = facebook_poster.delay(
         login=content_request.email,
         password=enc_pass,
-        groups=groups,
         image_name=material.image_name,
         text_name=material.text_name,
+        id=unique_string
     )
     return {"task_id": task.id}

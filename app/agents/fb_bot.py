@@ -33,7 +33,7 @@ class FacebookPoster:
     A class representing a bot for posting in groups on Facebook.
     """
 
-    def __init__(self, login: str, password: str, groups: list):
+    def __init__(self, login: str, password: str, groups: dict):
         """
         Initializes the attributes of the class.
         :param login: str Facebook login id credentials
@@ -47,7 +47,7 @@ class FacebookPoster:
         # Facebook login password credentials
         self.password = password
 
-        # List with Facebook groups
+        # Dict with Facebook groups
         self.groups = groups
 
         # Facebook page url
@@ -813,7 +813,7 @@ class FacebookPoster:
         counter = 0
         number = randint(3, 5)
 
-        for group in self.groups:
+        for group in self.groups.keys():
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
             logger.info(
