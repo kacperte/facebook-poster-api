@@ -869,7 +869,7 @@ class FacebookPoster:
 
             self.groups[group] = "processed"
             updated_groups = JobStatusBase(
-                date=datetime.now(), groups_to_procced=self.groups
+                id=group_id,date=datetime.now(), groups_to_procced=self.groups
             )
             with SessionLocal() as db:
                 db_job_status.update_job_status(
