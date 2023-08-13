@@ -19,6 +19,11 @@ from dotenv import load_dotenv
 from typing import Union
 from fake_useragent import UserAgent
 from .logger import create_logger
+from app.db import db_job_status
+from app.db.database import SessionLocal
+from ..schemas import JobStatusBase
+from datetime import datetime
+
 
 load_dotenv()
 
@@ -787,7 +792,7 @@ class FacebookPoster:
         # For pausing the script for some time
         self._time_patterns()
 
-    def prepare_and_send_post(self, txt_name: str, img_name: str):
+    def prepare_and_send_post(self, txt_name: str, img_name: str, group_id: str):
         # Log into Facebook
         self._login_to_facebook()
 
@@ -814,6 +819,10 @@ class FacebookPoster:
         number = randint(3, 5)
 
         for group in self.groups.keys():
+            # Skip the group if it was processed in an previous process
+            if self.groups[group] == "processed":
+                continue
+
             # Open Facebook group url
             self.driver.get(group + "buy_sell_discussion")
             logger.info(
@@ -857,6 +866,15 @@ class FacebookPoster:
 
             # For pausing the script for sometime
             self._time_patterns(10)
+
+            self.groups[group] = "processed"
+            updated_groups = JobStatusBase(
+                date=datetime.now(), groups_to_procced=self.groups
+            )
+            with SessionLocal() as db:
+                db_job_status.update_job_status(
+                    db=db, id=group_id, request=updated_groups
+                )
 
             if counter % number:
                 self.driver.get(self.base_url)

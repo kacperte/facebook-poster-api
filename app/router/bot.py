@@ -99,9 +99,7 @@ def send_content_to_fb_groups(
     label_groups = {x: "non-processed" for x in groups}
 
     job_status_to_add = JobStatusBase(
-        id=unique_string,
-        date=datetime.now(),
-        groups_to_procced=label_groups
+        id=unique_string, date=datetime.now(), groups_to_procced=label_groups
     )
     db_job_status.create_job_status(db, job_status_to_add)
 
@@ -111,6 +109,6 @@ def send_content_to_fb_groups(
         password=enc_pass,
         image_name=material.image_name,
         text_name=material.text_name,
-        id=unique_string
+        id=unique_string,
     )
     return {"task_id": task.id}

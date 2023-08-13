@@ -9,9 +9,7 @@ def create_job_status(db: Session, request: JobStatusBase):
     Creates new job status in the database
     """
     new_job_status = DbJobStatus(
-        id=request.id,
-        date=request.date,
-        groups_to_procced=request.groups_to_procced
+        id=request.id, date=request.date, groups_to_procced=request.groups_to_procced
     )
     db.add(new_job_status)
     db.commit()

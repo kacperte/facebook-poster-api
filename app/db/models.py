@@ -36,4 +36,3 @@ class DbJobStatus(Base):
     id = Column(String, primary_key=True, index=True)
     date = Column(DateTime)
     groups_to_procced = Column(JSON)
-
