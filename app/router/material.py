@@ -30,7 +30,7 @@ def upload_file_to_gcp_storage_fastapi(
     file: UploadFile = File(...),
 ):
     """
-    Upload file to S3
+    Upload file to GCP Storage
     """
     if not isinstance(bucket_name, str):
         raise ValueError("Invalid value for argument 'bucket_name'. Expected string.")
@@ -67,9 +67,15 @@ def upload_file_to_gcp_storage_fastapi(
     # get bucket with name
     bucket = storage_client.get_bucket(bucket_name)
 
+    # check if blob already exists
+    blob = bucket.blob(upload_path)
+    if blob.exists():
+        raise HTTPException(
+            status_code=400, detail="File with the same name already exists in the bucket."
+        )
+
     # upload to GCS
     try:
-        blob = bucket.blob(upload_path)
         blob.upload_from_filename(temp.name)
     except Exception as e:
         raise HTTPException(

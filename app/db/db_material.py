@@ -18,6 +18,7 @@ def create_material(db: Session, request: MaterialBase):
     db.add(new_group_post)
     db.commit()
     db.refresh(new_group_post)
+
     return new_group_post
 
 
