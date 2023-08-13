@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from app.schemas import MaterialBase, MaterialDisplay, UserBase
 from sqlalchemy.orm.session import Session
 from app.db.database import get_db
-from app.db import db_material
+from app.db import db_material, db_user
 from typing import List, Tuple
 from tempfile import NamedTemporaryFile
 from app.auth.oauth2 import get_current_user
@@ -87,13 +87,12 @@ def upload_file_to_gcp_storage_fastapi(
 async def create_material(
     client: str,
     position: str,
-    creator_id: int,
     db: Session = Depends(get_db),
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
     current_user: UserBase = Depends(get_current_user),
 ):
-
+    user = db_user.get_user_by_name(db=db, username=current_user.email).id
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
@@ -111,7 +110,7 @@ async def create_material(
             type_of_file="copy",
             file=text_content,
         ),
-        creator_id=creator_id,
+        creator_id=user,
     )
 
     new_material = db_material.create_material(db, newMaterial)
@@ -176,6 +175,7 @@ async def update_material(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
+
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
@@ -193,7 +193,7 @@ async def update_material(
             type_of_file="copy",
             file=text_content,
         ),
-        creator_id=creator_id,
+        creator_id=creator_id.id,
     )
 
     return db_material.update_material(db, id, newMaterial)
