@@ -8,4 +8,8 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . /code/app
 
-CMD celery -A app.tasks worker & uvicorn app.main:app --host 0.0.0.0 --port 80
+ENV PYTHONPATH=/code
+
+CMD sleep 30 && cd app && alembic upgrade head && \
+    celery -A app.tasks worker & uvicorn app.main:app --host 0.0.0.0 --port 80
+
