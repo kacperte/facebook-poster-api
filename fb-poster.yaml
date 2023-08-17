@@ -91,6 +91,12 @@ spec:
           volumeMounts:
             - name: google-cloud-key
               mountPath: /var/secrets/google
+            - name: user-secrets
+              mountPath: /etc/user-secrets
+              readOnly: true
+            - name: db-secrets
+              mountPath: /etc/db-secrets
+              readOnly: true
           ports:
             - containerPort: 80
           resources:
@@ -103,6 +109,13 @@ spec:
         - name: google-cloud-key
           secret:
             secretName: iam-storage
+        - name: user-secrets
+          secret:
+            secretName: user-secrets
+        - name: db-secrets
+          secret:
+            secretName: db-secrets
+
 ---
 apiVersion: apps/v1
 kind: Deployment

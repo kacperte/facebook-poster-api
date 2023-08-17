@@ -20,6 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     from alembic import context
+    import os
     from db.database import SessionLocal
     from db.db_user import create_user
     from schemas import UserBase
@@ -31,9 +32,9 @@ def upgrade() -> None:
         ).fetchone()
         if result[0] == 0:
             default_user = UserBase(
-                username="kacper.trzepiecinski@hsswork.pl",
-                password="QuD*CC12d_Hju10!",
-                email="kacper.trzepiecinski@hsswork.pl"
+                username=os.environ['DEFAULT_USER_USERNAME'],
+                password=os.environ['DEFAULT_USER_PASSWORD'],
+                email=os.environ['DEFAULT_USER_EMAIL']
             )
             create_user(db=db, request=default_user)
 
