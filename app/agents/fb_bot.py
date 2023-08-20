@@ -409,6 +409,12 @@ class FacebookPoster:
             EC.presence_of_element_located((By.ID, "facebook"))
         )
 
+        WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//div[@class='x6s0dn4 x78zum5 x15zctf7 x1s65kcs x1n2onr6 x1ja2u2z']")
+            )
+        )
+
         logger.info("Logged in to Facebook successfully")
 
         # Scroll the feed by 3 units to simulate human-like behavior
