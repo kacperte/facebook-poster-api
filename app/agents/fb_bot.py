@@ -415,6 +415,7 @@ class FacebookPoster:
             )
         except selenium.common.exceptions.TimeoutException as e:
             logger.error(f"Timed out waiting for element to appear: {e}")
+            raise
 
         logger.info("Logged in to Facebook successfully")
 
