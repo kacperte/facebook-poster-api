@@ -3,13 +3,20 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
+
+def read_secret(secret_path):
+    with open(secret_path, 'r') as f:
+        return f.read().strip()
+
+secrets_dir = '/etc/db-secrets/'
+
 # configuration for connecting to the database
 conf = {
-    "host": os.environ['DB_HOST'],
-    "port": os.environ['DB_PORT'],
-    "database": os.environ['DB_DATABASE'],
-    "user": os.environ['DB_USER'],
-    "password": os.environ['DB_PASSWORD'],
+    "host": read_secret(f"{secrets_dir}host_db"),
+    "port": read_secret(f"{secrets_dir}port_db"),
+    "database": read_secret(f"{secrets_dir}database"),
+    "user": read_secret(f"{secrets_dir}user_db"),
+    "password": read_secret(f"{secrets_dir}password_db")
 }
 
 # create the engine for connecting to the database
