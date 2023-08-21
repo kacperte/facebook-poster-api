@@ -1,4 +1,6 @@
 import os
+
+import selenium.common.exceptions
 from google.cloud import storage
 import time
 import logging
@@ -404,16 +406,15 @@ class FacebookPoster:
         )
         login_button.click()
 
-        # Load FB start page
-        WebDriverWait(self.driver, 30).until(
-            EC.presence_of_element_located((By.ID, "facebook"))
-        )
-
-        WebDriverWait(self.driver, 30).until(
-            EC.presence_of_element_located(
-                (By.XPATH, "//div[@class='x6s0dn4 x78zum5 x15zctf7 x1s65kcs x1n2onr6 x1ja2u2z']")
+        # Check if successfully logged into Facebook account
+        try:
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//div[@class='x6s0dn4 x78zum5 x15zctf7 x1s65kcs x1n2onr6 x1ja2u2z']")
+                )
             )
-        )
+        except selenium.common.exceptions.TimeoutException as e:
+            logger.error(f"Timed out waiting for element to appear: {e}")
 
         logger.info("Logged in to Facebook successfully")
 
