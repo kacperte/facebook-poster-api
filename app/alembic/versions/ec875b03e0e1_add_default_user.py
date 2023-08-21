@@ -25,6 +25,12 @@ def upgrade() -> None:
     from db.db_user import create_user
     from schemas import UserBase
 
+    def read_secret(secret_path):
+        with open(secret_path, 'r') as f:
+            return f.read().strip()
+
+    secrets_dir = '/etc/user-secrets/'
+
     with SessionLocal() as db:
         connection = context.get_bind()
         result = connection.execute(
@@ -32,9 +38,9 @@ def upgrade() -> None:
         ).fetchone()
         if result[0] == 0:
             default_user = UserBase(
-                username=os.environ['DEFAULT_USER_USERNAME'],
-                password=os.environ['DEFAULT_USER_PASSWORD'],
-                email=os.environ['DEFAULT_USER_EMAIL']
+                username=read_secret(f"{secrets_dir}username"),
+                password=read_secret(f"{secrets_dir}password"),
+                email=read_secret(f"{secrets_dir}email")
             )
             create_user(db=db, request=default_user)
 
