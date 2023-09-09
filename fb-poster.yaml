@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
         - name: fb-poster-api
-          image: gcr.io/pelagic-plexus-391019/fb-poster:latest
+          image: gcr.io/stellar-aleph-398117/fb-poster:latest
           imagePullPolicy: Always
           env:
             - name: HOST_IP
@@ -208,41 +208,6 @@ spec:
               memory: 64Mi
 
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: prometheus
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: prometheus
-  template:
-    metadata:
-      labels:
-        app: prometheus
-    spec:
-      containers:
-        - name: prometheus
-          image: prom/prometheus
-          args:
-            - '--storage.tsdb.retention=6h'
-            - '--storage.tsdb.path=/prometheus'
-            - '--config.file=/etc/prometheus/prometheus.yml'
-          ports:
-            - containerPort: 9090
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/prometheus/
-            - name: data-volume
-              mountPath: /prometheus
-      volumes:
-        - name: config-volume
-          configMap:
-            name: prometheus-config
-        - name: data-volume
-          emptyDir: {}
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -333,17 +298,4 @@ spec:
       port: 5900
       targetPort: 5900
   type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: prometheus-service
-spec:
-  selector:
-    app: prometheus
-  ports:
-    - protocol: TCP
-      port: 9090
-      targetPort: 9090
-  type: ClusterIP
----
+

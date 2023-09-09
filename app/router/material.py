@@ -50,7 +50,7 @@ def upload_file_to_gcp_storage_fastapi(
 
     # Prepare file path name
     upload_path = f"{type_of_file}/{client_name.lower()}__{position_name.lower()}.{file_extension}"
-
+    print(upload_path, bucket_name)
     # handle upload object
     temp = NamedTemporaryFile(delete=False)
     try:
@@ -103,14 +103,14 @@ async def create_material(
         client=client.lower(),
         position=position.lower(),
         image_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster",
+            bucket_name="fb-poster-bucket",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster",
+            bucket_name="fb-poster-bucket",
             client_name=client,
             position_name=position,
             type_of_file="copy",
@@ -175,25 +175,24 @@ async def update_material(
     id: int,
     client: str,
     position: str,
-    creator_id: int,
     image: UploadFile = File(...),
     text_content: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-
+    creator_id = db_user.get_user_by_name(db=db, username=current_user.username)
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
         image=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster",
+            bucket_name="fb-poster-bucket",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster",
+            bucket_name="fb-poster-bucket",
             client_name=client.lower(),
             position_name=position.lower(),
             type_of_file="copy",
