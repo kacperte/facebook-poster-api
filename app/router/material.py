@@ -180,25 +180,26 @@ async def update_material(
     db: Session = Depends(get_db),
     current_user: UserBase = Depends(get_current_user),
 ):
-    creator_id = db_user.get_user_by_name(db=db, username=current_user.username)
+    user_id = db_user.get_user_by_name(db=db, username=current_user.username).id
+
     newMaterial = MaterialBase(
         client=client.lower(),
         position=position.lower(),
-        image=upload_file_to_gcp_storage_fastapi(
+        image_name=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster-bucket",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
-        text=upload_file_to_gcp_storage_fastapi(
+        text_name=upload_file_to_gcp_storage_fastapi(
             bucket_name="fb-poster-bucket",
             client_name=client.lower(),
             position_name=position.lower(),
             type_of_file="copy",
             file=text_content,
         ),
-        creator_id=creator_id.id,
+        creator_id=user_id,
     )
 
     return db_material.update_material(db, id, newMaterial)

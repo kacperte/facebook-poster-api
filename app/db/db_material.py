@@ -69,8 +69,8 @@ def update_material(db: Session, id: int, request: MaterialBase):
         {
             DbMaterial.client: request.client,
             DbMaterial.position: request.position,
-            DbMaterial.image: request.image_name,
-            DbMaterial.text: request.text_name,
+            DbMaterial.image_name: request.image_name,
+            DbMaterial.text_name: request.text_name,
         }
     )
     db.commit()
