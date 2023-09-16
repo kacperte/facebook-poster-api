@@ -410,7 +410,10 @@ class FacebookPoster:
         try:
             WebDriverWait(self.driver, 30).until(
                 EC.presence_of_element_located(
-                    (By.XPATH, "//div[@class='x6s0dn4 x78zum5 x15zctf7 x1s65kcs x1n2onr6 x1ja2u2z']")
+                    (
+                        By.XPATH,
+                        "//div[@class='x6s0dn4 x78zum5 x15zctf7 x1s65kcs x1n2onr6 x1ja2u2z']",
+                    )
                 )
             )
         except selenium.common.exceptions.TimeoutException as e:
@@ -877,7 +880,7 @@ class FacebookPoster:
 
             self.groups[group] = "processed"
             updated_groups = JobStatusBase(
-                id=group_id,date=datetime.now(), groups_to_procced=self.groups
+                id=group_id, date=datetime.now(), groups_to_procced=self.groups
             )
             with SessionLocal() as db:
                 db_job_status.update_job_status(

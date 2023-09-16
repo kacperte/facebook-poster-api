@@ -5,10 +5,11 @@ import os
 
 
 def read_secret(secret_path):
-    with open(secret_path, 'r') as f:
+    with open(secret_path, "r") as f:
         return f.read().strip()
 
-secrets_dir = '/etc/db-secrets/'
+
+secrets_dir = "/etc/db-secrets/"
 
 # configuration for connecting to the database
 conf = {
@@ -16,7 +17,7 @@ conf = {
     "port": read_secret(f"{secrets_dir}port_db"),
     "database": read_secret(f"{secrets_dir}database"),
     "user": read_secret(f"{secrets_dir}user_db"),
-    "password": read_secret(f"{secrets_dir}password_db")
+    "password": read_secret(f"{secrets_dir}password_db"),
 }
 
 # create the engine for connecting to the database

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 
 class DbUser(Base):
     __tablename__ = "users"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String)
     email = Column(String)
@@ -16,7 +16,7 @@ class DbUser(Base):
 
 class DbMaterial(Base):
     __tablename__ = "material"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id = Column(Integer, primary_key=True, index=True)
     client = Column(String)
     position = Column(String)
@@ -28,7 +28,7 @@ class DbMaterial(Base):
 
 class DbGroups(Base):
     __tablename__ = "groups"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id = Column(Integer, primary_key=True, index=True)
     groups_name = Column(String)
     groups = Column(String)
@@ -36,7 +36,7 @@ class DbGroups(Base):
 
 class DbJobStatus(Base):
     __tablename__ = "job_status"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     id = Column(String, primary_key=True, index=True)
     date = Column(DateTime)
     groups_to_procced = Column(JSON)

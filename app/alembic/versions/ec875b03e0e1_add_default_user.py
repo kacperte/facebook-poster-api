@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'ec875b03e0e1'
+revision: str = "ec875b03e0e1"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,10 +26,10 @@ def upgrade() -> None:
     from schemas import UserBase
 
     def read_secret(secret_path):
-        with open(secret_path, 'r') as f:
+        with open(secret_path, "r") as f:
             return f.read().strip()
 
-    secrets_dir = '/etc/user-secrets/'
+    secrets_dir = "/etc/user-secrets/"
 
     with SessionLocal() as db:
         connection = context.get_bind()
@@ -40,10 +40,6 @@ def upgrade() -> None:
             default_user = UserBase(
                 username=read_secret(f"{secrets_dir}username"),
                 password=read_secret(f"{secrets_dir}password"),
-                email=read_secret(f"{secrets_dir}email")
+                email=read_secret(f"{secrets_dir}email"),
             )
             create_user(db=db, request=default_user)
-
-
-
-

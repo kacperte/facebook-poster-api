@@ -71,7 +71,8 @@ def upload_file_to_gcp_storage_fastapi(
     blob = bucket.blob(upload_path)
     if blob.exists():
         raise HTTPException(
-            status_code=400, detail="File with the same name already exists in the bucket."
+            status_code=400,
+            detail="File with the same name already exists in the bucket.",
         )
 
     # upload to GCS
