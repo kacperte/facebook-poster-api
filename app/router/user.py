@@ -1,3 +1,4 @@
+import base64
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas import UserBase, UserDisplay
 from sqlalchemy.orm.session import Session
@@ -6,9 +7,25 @@ from app.db import db_user
 from typing import List
 from app.auth.oauth2 import get_current_user
 from pydantic import EmailStr
+from kubernetes import client, config
 
 
 router = APIRouter(prefix="/user", tags=["user"])
+
+
+def add_new_user_to_secret(login, password):
+    try:
+        config.load_kube_config()
+        v1 = client.CoreV1Api()
+
+        secret = v1.read_namespaced_secret("crudentials-secrets", "default")
+
+        new_password = password.encode("utf-8")
+        secret.data[login] = base64.b64encode(new_password).decode("utf-8")
+
+        v1.replace_namespaced_secret("crudentials-secrets", "default", secret)
+    except client.ApiException as e:
+        print(f"Nie udało się dodać użytkownika do Secret: {e}")
 
 
 @router.post(
@@ -25,6 +42,7 @@ async def create_user(
     if db_user.check_duplicate(db, request.username):
         raise HTTPException(status_code=409, detail="Username already in database")
 
+    add_new_user_to_secret(login=request.username, password=request.password)
     user = db_user.create_user(db, request)
 
     if not user.id:

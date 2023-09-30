@@ -190,23 +190,6 @@ spec:
               memory: 4Gi
             requests:
               memory: 2Gi
-        - name: selenium-hub-export
-          image: gmichels/selenium-grid-exporter:v1.0.0
-          command: [ "python", "./exporter.py" ]
-          args:
-            - "--grid-url=http://selenium-hub-service:4444"
-            - "--metrics-port=9104"
-            - "--publish-interval=10"
-          ports:
-            - containerPort: 9104
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
-            requests:
-              cpu: 100m
-              memory: 64Mi
-
 ---
 apiVersion: v1
 kind: Service
