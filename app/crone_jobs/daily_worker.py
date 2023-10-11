@@ -1,27 +1,50 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
-import os
 from urllib.parse import urljoin
 import requests
 import json
+from kubernetes import client, config
+import base64
+import os
 
 
-SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
-         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+SCOPE = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive",
+]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
-PATH = r"C:\Users\kacpe\OneDrive\Pulpit\Python\Projekty\fb-poster-discord-bot\app\iam-storage.json"
-URL = "http://34.118.45.197/"
+PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "/var/secrets/google/key.json")
+URL = "http://34.118.6.188/"
 
 
-def make_api_request(url, headers=None, method='GET', **kwargs):
+def make_api_request(url, headers=None, method="GET", **kwargs):
     """Make an API request and return the JSON response."""
     try:
         response = requests.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
         return json.loads(response.content)
     except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
+        raise ValueError(
+            f"Invalid credentials, HTTP status code: {e.response.status_code}"
+        )
+
+
+def get_secret_value(secret_name, namespace, key):
+    config.load_incluster_config()
+    v1 = client.CoreV1Api()
+
+    secret = v1.read_namespaced_secret(secret_name, namespace)
+
+    encoded_value = secret.data.get(key)
+    if encoded_value:
+        decoded_value = base64.b64decode(encoded_value).decode("utf-8")
+        return decoded_value
+    else:
+        print(f"Klucz {key} nie został znaleziony w secret {secret_name}.")
+        return None
 
 
 def execute_daily_tasks():
@@ -42,15 +65,20 @@ def execute_daily_tasks():
         if worksheet.cell(row, col_with_task_status).value == "FALSE":
             data = {
                 "login": worksheet.cell(row, col_with_recruiter_login).value,
-                # "password": os.environ.get(worksheet.cell(row, col_with_recruiter_login).value),
-                'password': "QuD*CC12d_Hju12!",
+                "password": get_secret_value(
+                    secret_name="crudentials-secrets",
+                    namespace="default",
+                    key=worksheet.cell(row, col_with_recruiter_login).value.split("@")[
+                        0
+                    ],
+                ),
                 "email": worksheet.cell(row, col_with_recruiter_login).value,
                 "groups_name": worksheet.cell(row, col_with_groups_name).value,
-                "material_id": int(worksheet.cell(row, col_with_material_id).value)
+                "material_id": int(worksheet.cell(row, col_with_material_id).value),
             }
 
             api_endpoint = urljoin(URL, "bot/run")
-            response_dict = make_api_request(api_endpoint, method='POST', json=data)
+            response_dict = make_api_request(api_endpoint, method="POST", json=data)
             if response_dict:
                 print(f"Zostało uruchomione nowe zadanie do wykonania.")
             else:
@@ -60,9 +88,4 @@ def execute_daily_tasks():
 
             return
 
-
-
-
-
-
-
+execute_daily_tasks()

@@ -15,15 +15,18 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 def add_new_user_to_secret(login, password):
     try:
-        config.load_kube_config()
+        config.load_incluster_config()
         v1 = client.CoreV1Api()
 
         secret = v1.read_namespaced_secret("crudentials-secrets", "default")
 
         new_password = password.encode("utf-8")
-        secret.data[login] = base64.b64encode(new_password).decode("utf-8")
+        secret.data[login.split("@")[0]] = base64.b64encode(new_password).decode(
+            "utf-8"
+        )
 
         v1.replace_namespaced_secret("crudentials-secrets", "default", secret)
+        print("!!!")
     except client.ApiException as e:
         print(f"Nie udało się dodać użytkownika do Secret: {e}")
 
