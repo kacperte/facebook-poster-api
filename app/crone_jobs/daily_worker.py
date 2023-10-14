@@ -17,7 +17,7 @@ SCOPE = [
 ]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
 PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "/var/secrets/google/key.json")
-URL = "http://34.118.6.188/"
+URL = os.environ.get("HOST_IP")
 
 
 def make_api_request(url, headers=None, method="GET", **kwargs):
