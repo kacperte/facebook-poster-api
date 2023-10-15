@@ -32,7 +32,7 @@ load_dotenv()
 # Prepare namedtuple
 Test_output = namedtuple("Test_output", ["selenium_element", "n_for_end_and_position"])
 
-logger = create_logger(__name__, level=logging.INFO)
+logger = create_logger(__name__)
 
 
 class FacebookPoster:

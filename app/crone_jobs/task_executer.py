@@ -7,6 +7,9 @@ import json
 from kubernetes import client, config
 import base64
 import os
+from ..agents.logger import create_logger
+
+logger = create_logger(__name__)
 
 
 COLS_PER_DAY = 5
@@ -51,7 +54,7 @@ def get_secret_value(secret_name, namespace, key):
         decoded_value = base64.b64decode(encoded_value).decode("utf-8")
         return decoded_value
     else:
-        print(f"Klucz {key} nie został znaleziony w secret {secret_name}.")
+        logger.error(f"Klucz {key} nie został znaleziony w secret {secret_name}.")
         return None
 
 
@@ -61,7 +64,7 @@ def execute_daily_tasks():
         client_gspread = gspread.authorize(credentials)
         spreadsheet = client_gspread.open_by_url(url=FILE_URL)
     except Exception as e:
-        print(f"Problem z autoryzacją do arkusza kalkulacyjnego: {e}")
+        logger.error(f"Problem z autoryzacją do arkusza kalkulacyjnego: {e}")
         return
 
     worksheet = spreadsheet.get_worksheet(2)
@@ -90,9 +93,9 @@ def execute_daily_tasks():
             try:
                 response_dict = make_api_request(api_endpoint, method="POST", json=data)
                 if response_dict:
-                    print(f"Zostało uruchomione nowe zadanie do wykonania.")
+                    logger.info(f"Zostało uruchomione nowe zadanie do wykonania.")
             except ValueError as e:
-                print(f"Błąd podczas żądania API: {e}")
+                logger.error(f"Błąd podczas żądania API: {e}")
 
             worksheet.update_cell(row=row, col=col_with_task_status, value="TRUE")
 

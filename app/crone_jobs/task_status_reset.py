@@ -2,6 +2,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import datetime
+from ..agents.logger import create_logger
+
+logger = create_logger(__name__)
 
 SCOPE = [
     "https://spreadsheets.google.com/feeds",
@@ -24,7 +27,7 @@ def reset_task_status():
         client_gspread = gspread.authorize(credentials)
         spreadsheet = client_gspread.open_by_url(url=FILE_URL)
     except Exception as e:
-        print(f"Problem z autoryzacją do arkusza kalkulacyjnego: {e}")
+        logger.error(f"Problem z autoryzacją do arkusza kalkulacyjnego: {e}")
         return
 
     worksheet = spreadsheet.get_worksheet(2)
@@ -40,6 +43,6 @@ def reset_task_status():
 
     try:
         worksheet.update_cells(cells_to_update)
-        print("Status zadań został zresetowany.")
+        logger.info("Status zadań został zresetowany.")
     except Exception as e:
-        print(f"Problem z aktualizacją komórek w arkuszu kalkulacyjnym: {e}")
+        logger.error(f"Problem z aktualizacją komórek w arkuszu kalkulacyjnym: {e}")
