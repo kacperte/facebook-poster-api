@@ -2,7 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import datetime
-from ..agents.logger import create_logger
+from agents.logger import create_logger
 
 logger = create_logger(__name__)
 
@@ -46,3 +46,7 @@ def reset_task_status():
         logger.info("Status zadań został zresetowany.")
     except Exception as e:
         logger.error(f"Problem z aktualizacją komórek w arkuszu kalkulacyjnym: {e}")
+
+
+if __name__ == "__main__":
+    reset_task_status()

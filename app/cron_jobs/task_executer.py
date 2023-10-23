@@ -7,7 +7,7 @@ import json
 from kubernetes import client, config
 import base64
 import os
-from ..agents.logger import create_logger
+from agents.logger import create_logger
 
 logger = create_logger(__name__)
 
