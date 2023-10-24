@@ -7,7 +7,7 @@ import json
 from kubernetes import client, config
 import base64
 import os
-from agents.logger import create_logger
+from app.agents.logger import create_logger
 
 logger = create_logger(__name__)
 
@@ -76,7 +76,8 @@ def execute_daily_tasks():
     col_with_task_status = (current_day * COLS_PER_DAY) + COL_OFFSET_TASK_STATUS
 
     for row in range(FIRST_ROW, LAST_ROW):
-        if worksheet.cell(row, col_with_task_status).value == "FALSE":
+        if (worksheet.cell(row, col_with_task_status).value == "FALSE" and
+                worksheet.cell(row, col_with_recruiter_login).value):
             data = {
                 "login": worksheet.cell(row, col_with_recruiter_login).value,
                 "password": get_secret_value(
