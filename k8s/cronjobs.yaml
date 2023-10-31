@@ -1,0 +1,30 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: task-executer-cronjob
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: task-executer
+            image: gcr.io/stellar-aleph-398117/cron-task-executer
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: task-status-reset-cronjob
+spec:
+  schedule: "50 23 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: task-status-reset
+            image: gcr.io/stellar-aleph-398117/cron-task-status-reset
+          restartPolicy: OnFailure
