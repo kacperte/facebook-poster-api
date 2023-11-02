@@ -64,7 +64,8 @@ spec:
               cpu: 500m
               memory: 2Gi
             requests:
-              memory: 1Gi
+              memory: 500Mi
+
 
 ---
 apiVersion: apps/v1
@@ -104,7 +105,7 @@ spec:
               cpu: 1000m
               memory: 4Gi
             requests:
-              memory: 4Gi
+              memory: 500Mi
       volumes:
         - name: google-cloud-key
           secret:
@@ -115,7 +116,48 @@ spec:
         - name: db-secrets
           secret:
             secretName: db-secrets
-
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+    spec:
+      containers:
+        - name: discord-bot
+          image: gcr.io/stellar-aleph-398117/discord-bot:latest
+          imagePullPolicy: Always
+          env:
+            - name: URL
+              value: http://34.116.171.18/
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-secrets
+                  key: TOKEN
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
+            requests:
+              memory: 500Mi
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: iam-storage
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -149,7 +191,7 @@ spec:
               cpu: 1000m
               memory: 4Gi
             requests:
-              memory: 2Gi
+              memory: 500Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -189,7 +231,7 @@ spec:
               cpu: 1000m
               memory: 4Gi
             requests:
-              memory: 2Gi
+              memory: 500Mi
 ---
 apiVersion: v1
 kind: Service
@@ -281,4 +323,18 @@ spec:
       port: 5900
       targetPort: 5900
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discord-bot-service
+spec:
+  selector:
+    app: discord-bot
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
 
