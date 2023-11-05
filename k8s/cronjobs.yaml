@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: task-executer-cronjob
 spec:
-  schedule: "0 * * * *"
+  schedule: "0 */3 * * *"
   jobTemplate:
     spec:
       template:
@@ -11,6 +11,12 @@ spec:
           containers:
           - name: task-executer
             image: gcr.io/stellar-aleph-398117/cron-task-executer
+            resources:
+              requests:
+                memory: 500Mi
+              limits:
+                cpu: 1000m
+                memory: 4Gi
           restartPolicy: OnFailure
 
 ---
@@ -27,4 +33,11 @@ spec:
           containers:
           - name: task-status-reset
             image: gcr.io/stellar-aleph-398117/cron-task-status-reset
+            resources:
+              requests:
+                cpu: "100m"
+                memory: "200Mi"
+              limits:
+                cpu: "200m"
+                memory: "400Mi"
           restartPolicy: OnFailure

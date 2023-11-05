@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefox
+spec:
+  selector:
+    matchLabels:
+      app: firefox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: firefox
+    spec:
+      containers:
+        - name: firefox
+          image: selenium/node-firefox:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SE_EVENT_BUS_HOST
+              value: selenium-hub-service
+            - name: SE_EVENT_BUS_PUBLISH_PORT
+              value: "4442"
+            - name: SE_EVENT_BUS_SUBSCRIBE_PORT
+              value: "4443"
+            - name: SE_NODE_MAX_SESSIONS
+              value: "10"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 250Mi

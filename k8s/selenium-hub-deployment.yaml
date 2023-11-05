@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium-hub
+spec:
+  selector:
+    matchLabels:
+      app: selenium-hub
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: selenium-hub
+    spec:
+      containers:
+        - name: selenium-hub
+          image: selenium/hub
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GRID_BROWSER_TIMEOUT
+              value: "30000"
+            - name: GRID_TIMEOUT
+              value: "300000"
+            - name: GRID_NEW_SESSION_WAIT_TIMEOUT
+              value: "30000"
+            - name: POOL_MAX
+              value: "600000"
+            - name: GRID_MAX_SESSION
+              value: "10"
+          ports:
+            - containerPort: 4442
+            - containerPort: 4443
+            - containerPort: 4444
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 4Gi
+            requests:
+              memory: 500Mi

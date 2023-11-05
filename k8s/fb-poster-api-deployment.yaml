@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fb-poster-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fb-poster-api
+  template:
+    metadata:
+      labels:
+        app: fb-poster-api
+    spec:
+      containers:
+        - name: fb-poster-api
+          image: gcr.io/stellar-aleph-398117/fb-poster:latest
+          imagePullPolicy: Always
+          env:
+            - name: HOST_IP
+              value: http://34.116.171.18:30002/
+          volumeMounts:
+            - name: google-cloud-key
+              mountPath: /var/secrets/google
+            - name: user-secrets
+              mountPath: /etc/user-secrets
+              readOnly: true
+            - name: db-secrets
+              mountPath: /etc/db-secrets
+              readOnly: true
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 4Gi
+            requests:
+              cpu: 1000m
+              memory: 500Mi
+      volumes:
+        - name: google-cloud-key
+          secret:
+            secretName: iam-storage
+        - name: user-secrets
+          secret:
+            secretName: user-secrets
+        - name: db-secrets
+          secret:
+            secretName: db-secrets
