@@ -3,21 +3,34 @@ kind: CronJob
 metadata:
   name: task-executer-cronjob
 spec:
-  schedule: "0 */3 * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
         spec:
+          restartPolicy: OnFailure
           containers:
           - name: task-executer
             image: gcr.io/stellar-aleph-398117/cron-task-executer
+            env:
+              - name: URL
+                value: "http://34.116.171.18/"
+              - name: GOOGLE_APPLICATION_CREDENTIALS
+                value: "/var/secrets/google/key.json"
+            volumeMounts:
+              - name: google-cloud-key
+                mountPath: /var/secrets/google
             resources:
               requests:
-                memory: 500Mi
+                memory: "500Mi"
+                cpu: "1000m"
               limits:
-                cpu: 1000m
-                memory: 4Gi
-          restartPolicy: OnFailure
+                memory: "4Gi"
+                cpu: "1000m"
+          volumes:
+          - name: google-cloud-key
+            secret:
+              secretName: iam-storage
 
 ---
 apiVersion: batch/v1
@@ -30,9 +43,16 @@ spec:
     spec:
       template:
         spec:
+          restartPolicy: OnFailure
           containers:
           - name: task-status-reset
             image: gcr.io/stellar-aleph-398117/cron-task-status-reset
+            env:
+              - name: GOOGLE_APPLICATION_CREDENTIALS
+                value: "/var/secrets/google/key.json"
+            volumeMounts:
+              - name: google-cloud-key
+                mountPath: /var/secrets/google
             resources:
               requests:
                 cpu: "100m"
@@ -40,4 +60,7 @@ spec:
               limits:
                 cpu: "200m"
                 memory: "400Mi"
-          restartPolicy: OnFailure
+          volumes:
+          - name: google-cloud-key
+            secret:
+              secretName: iam-storage

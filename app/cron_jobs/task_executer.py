@@ -7,7 +7,7 @@ import json
 from kubernetes import client, config
 import base64
 import os
-from app.agents.logger import create_logger
+from agents.logger import create_logger
 
 logger = create_logger(__name__)
 
@@ -27,8 +27,8 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive",
 ]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
-PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "/var/secrets/google/key.json")
-URL = os.environ.get("HOST_IP")
+credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+URL = os.environ.get("URL")
 
 
 def make_api_request(url, headers=None, method="GET", **kwargs):
@@ -60,7 +60,7 @@ def get_secret_value(secret_name, namespace, key):
 
 def execute_daily_tasks():
     try:
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(PATH, SCOPE)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, SCOPE)
         client_gspread = gspread.authorize(credentials)
         spreadsheet = client_gspread.open_by_url(url=FILE_URL)
     except Exception as e:

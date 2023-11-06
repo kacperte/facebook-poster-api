@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+    spec:
+      containers:
+      - name: discord-bot
+        image: gcr.io/stellar-aleph-398117/discord-bot:latest
+        imagePullPolicy: Always
+        env:
+        - name: URL
+          value: "http://34.116.171.18/"
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-secrets
+              key: TOKEN
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/var/secrets/google/key.json"
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            memory: 250Mi
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: iam-storage

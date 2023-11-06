@@ -6,8 +6,9 @@ COPY ../requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-COPY ./cron_jobs/task_executer.py /code/task_executer.py
+COPY ./cron_jobs/task_executer.py /code/cron_jobs/task_executer.py
+COPY ./agents/logger.py /code/agents/logger.py
 
 ENV PYTHONPATH=/code
 
-CMD ["python", "task_executer.py"]
+CMD ["python", "/code/cron_jobs/task_executer.py"]

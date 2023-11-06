@@ -13,8 +13,8 @@ SCOPE = [
     "https://www.googleapis.com/auth/drive",
 ]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
-PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "/var/secrets/google/key.json")
-URL = os.environ.get("HOST_IP")
+credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+
 COLS_PER_DAY = 5
 COL_OFFSET_TASK_STATUS = 5
 FIRST_ROW = 3
@@ -23,7 +23,7 @@ LAST_ROW = 11
 
 def reset_task_status():
     try:
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(PATH, SCOPE)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, SCOPE)
         client_gspread = gspread.authorize(credentials)
         spreadsheet = client_gspread.open_by_url(url=FILE_URL)
     except Exception as e:
