@@ -91,7 +91,7 @@ def execute_daily_tasks():
             }
 
             api_endpoint = urljoin(URL, "bot/run")
-            print(api_endpoint, data)
+
             try:
                 response_dict = make_api_request(api_endpoint, method="POST", json=data)
                 if response_dict:
@@ -100,6 +100,7 @@ def execute_daily_tasks():
                 logger.error(f"Błąd podczas żądania API: {e}")
 
             worksheet.update_cell(row=row, col=col_with_task_status, value="TRUE")
+            break
 
 
 if __name__ == "__main__":
