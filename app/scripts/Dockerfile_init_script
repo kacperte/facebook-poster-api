@@ -1,0 +1,22 @@
+FROM debian
+WORKDIR /code
+
+# Aktualizacja repozytoriów i instalacja curl
+RUN apt-get update && \
+    apt-get install -y curl
+
+# Pobieranie i instalacja kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x ./kubectl \
+    && mv ./kubectl /usr/local/bin/kubectl
+
+# Kopiowanie skryptu
+COPY ./scripts/init-script.sh /code/scripts/init-script.sh
+
+# Nadanie uprawnień wykonania
+RUN chmod +x /code/scripts/init-script.sh
+
+ENV PYTHONPATH=/code
+
+# Wyświetlenie struktury katalogów i uruchomienie skryptu
+CMD ls -lR /code; /code/scripts/init-script.sh

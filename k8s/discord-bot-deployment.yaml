@@ -1,5 +1,4 @@
----
-apiVersion: apps/v1
+add apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discord-bot
@@ -13,13 +12,18 @@ spec:
       labels:
         app: discord-bot
     spec:
+      initContainers:
+      - name: init-get-ip
+        image: gcr.io/stellar-aleph-398117/init-script
+        volumeMounts:
+        - name: temp-volume
+          mountPath: /tmp
       containers:
       - name: discord-bot
         image: gcr.io/stellar-aleph-398117/discord-bot:latest
         imagePullPolicy: Always
+        # Usuń wpis env URL, ponieważ będziemy odczytywać z pliku
         env:
-        - name: URL
-          value: "http://34.116.171.18/"
         - name: TOKEN
           valueFrom:
             secretKeyRef:
@@ -30,6 +34,8 @@ spec:
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
+        - name: temp-volume
+          mountPath: /tmp
         ports:
         - containerPort: 8080
         resources:
@@ -42,3 +48,5 @@ spec:
       - name: google-cloud-key
         secret:
           secretName: iam-storage
+      - name: temp-volume
+        emptyDir: {}
