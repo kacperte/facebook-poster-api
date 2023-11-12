@@ -1,4 +1,4 @@
-add apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discord-bot
@@ -22,7 +22,6 @@ spec:
       - name: discord-bot
         image: gcr.io/stellar-aleph-398117/discord-bot:latest
         imagePullPolicy: Always
-        # Usuń wpis env URL, ponieważ będziemy odczytywać z pliku
         env:
         - name: TOKEN
           valueFrom:

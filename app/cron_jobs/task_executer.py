@@ -28,7 +28,10 @@ SCOPE = [
 ]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
 credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-URL = os.environ.get("URL")
+with open('/tmp/adres-ip', 'r') as file:
+    ip = file.read().strip()
+
+URL = f'http://{ip}/'
 
 
 def make_api_request(url, headers=None, method="GET", **kwargs):

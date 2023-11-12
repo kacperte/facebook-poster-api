@@ -9,17 +9,23 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          initContainers:
+            - name: init-get-ip
+              image: gcr.io/stellar-aleph-398117/init-script
+              volumeMounts:
+              - name: temp-volume
+                mountPath: /tmp
           containers:
           - name: task-executer
             image: gcr.io/stellar-aleph-398117/cron-task-executer
             env:
-              - name: URL
-                value: "http://34.116.171.18/"
               - name: GOOGLE_APPLICATION_CREDENTIALS
                 value: "/var/secrets/google/key.json"
             volumeMounts:
               - name: google-cloud-key
                 mountPath: /var/secrets/google
+              - name: temp-volume
+                mountPath: /tmp
             resources:
               requests:
                 memory: "500Mi"
@@ -31,6 +37,8 @@ spec:
           - name: google-cloud-key
             secret:
               secretName: iam-storage
+          - name: temp-volume
+            emptyDir: { }
 
 ---
 apiVersion: batch/v1
