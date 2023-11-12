@@ -91,6 +91,7 @@ def execute_daily_tasks():
             }
 
             api_endpoint = urljoin(URL, "bot/run")
+            print(api_endpoint, data)
             try:
                 response_dict = make_api_request(api_endpoint, method="POST", json=data)
                 if response_dict:

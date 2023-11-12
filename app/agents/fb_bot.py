@@ -3,7 +3,6 @@ import os
 import selenium.common.exceptions
 from google.cloud import storage
 import time
-import logging
 import re
 from io import StringIO, BytesIO
 from PIL import Image

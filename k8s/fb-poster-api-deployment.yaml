@@ -33,11 +33,10 @@ spec:
             - containerPort: 80
           resources:
             limits:
-              cpu: 500m
-              memory: 3Gi
+              cpu: 1000m
+              memory: 4Gi
             requests:
-              cpu: 500m
-              memory: 1Gi
+              memory: 2Gi
       volumes:
         - name: google-cloud-key
           secret:
