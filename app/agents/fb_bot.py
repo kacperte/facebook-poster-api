@@ -894,7 +894,8 @@ class FacebookPoster:
 
             counter += 1
             logger.info(
-                f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')} {counter}/{self.groups.keys()}"
+                f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')} "
+                f"{counter}/{len(self.groups.keys())}"
             )
 
         self.driver.quit()
