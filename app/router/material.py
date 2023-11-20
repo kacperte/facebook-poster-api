@@ -104,14 +104,14 @@ async def create_material(
         client=client.lower(),
         position=position.lower(),
         image_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster-bucket",
+            bucket_name="fb-poster-storage",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster-bucket",
+            bucket_name="fb-poster-storage",
             client_name=client,
             position_name=position,
             type_of_file="copy",
@@ -187,14 +187,14 @@ async def update_material(
         client=client.lower(),
         position=position.lower(),
         image_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster-bucket",
+            bucket_name="fb-poster-storage",
             client_name=client,
             position_name=position,
             type_of_file="content",
             file=image,
         ),
         text_name=upload_file_to_gcp_storage_fastapi(
-            bucket_name="fb-poster-bucket",
+            bucket_name="fb-poster-storage",
             client_name=client.lower(),
             position_name=position.lower(),
             type_of_file="copy",

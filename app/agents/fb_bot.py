@@ -83,7 +83,7 @@ class FacebookPoster:
         self.time_pattern = randint(3, 5)  # seconds
 
         # Bukcet name
-        self.bucket_name = "fb-poster-bucket"
+        self.bucket_name = "fb-poster-storage"
 
         # Dict with text format action
         self.text_formatting_action = {

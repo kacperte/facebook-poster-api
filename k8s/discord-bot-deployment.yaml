@@ -14,13 +14,13 @@ spec:
     spec:
       initContainers:
       - name: init-get-ip
-        image: gcr.io/stellar-aleph-398117/init-script
+        image: gcr.io/neon-semiotics-405717/init-script:latest
         volumeMounts:
         - name: temp-volume
           mountPath: /tmp
       containers:
       - name: discord-bot
-        image: gcr.io/stellar-aleph-398117/discord-bot:latest
+        image: gcr.io/neon-semiotics-405717/discord-bot:latest
         imagePullPolicy: Always
         env:
         - name: TOKEN

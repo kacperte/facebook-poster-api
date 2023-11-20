@@ -15,13 +15,13 @@ spec:
     spec:
       initContainers:
         - name: init-get-ip
-          image: gcr.io/stellar-aleph-398117/init-script
+          image: gcr.io/neon-semiotics-405717/init-script:latest
           volumeMounts:
           - name: temp-volume
             mountPath: /tmp
       containers:
         - name: fb-poster-api
-          image: gcr.io/stellar-aleph-398117/fb-poster:latest
+          image: gcr.io/neon-semiotics-405717/fb-poster:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: google-cloud-key

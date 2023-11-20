@@ -11,13 +11,13 @@ spec:
           restartPolicy: OnFailure
           initContainers:
             - name: init-get-ip
-              image: gcr.io/stellar-aleph-398117/init-script
+              image: gcr.io/neon-semiotics-405717/init-script:latest
               volumeMounts:
               - name: temp-volume
                 mountPath: /tmp
           containers:
           - name: task-executer
-            image: gcr.io/stellar-aleph-398117/cron-task-executer
+            image: gcr.io/neon-semiotics-405717/cron-task-executer:latest
             env:
               - name: GOOGLE_APPLICATION_CREDENTIALS
                 value: "/var/secrets/google/key.json"
@@ -54,7 +54,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: task-status-reset
-            image: gcr.io/stellar-aleph-398117/cron-task-status-reset
+            image: gcr.io/neon-semiotics-405717/cron-task-status-reset:latest
             env:
               - name: GOOGLE_APPLICATION_CREDENTIALS
                 value: "/var/secrets/google/key.json"
