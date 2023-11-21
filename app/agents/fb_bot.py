@@ -1,5 +1,4 @@
 import os
-
 import selenium.common.exceptions
 from google.cloud import storage
 import time
@@ -768,7 +767,7 @@ class FacebookPoster:
                 n_for_end_and_position=n_to_move,
             )
             # For pausing the script for some time
-            self._time_patterns(3)
+            self._time_patterns(2)
 
             # Move the cursor to the end of the line
             selenium_element.send_keys(Keys.RIGHT * n)
@@ -853,7 +852,7 @@ class FacebookPoster:
             )
             element.click()
 
-            self._time_patterns(20)
+            self._time_patterns(15)
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
@@ -888,9 +887,9 @@ class FacebookPoster:
 
             if counter % number:
                 self.driver.get(self.base_url)
-                self._time_patterns(5)
+                self._time_patterns(3)
                 self._scroll_feed(self.driver, 5)
-                self._time_patterns(5)
+                self._time_patterns(3)
 
             counter += 1
             logger.info(
