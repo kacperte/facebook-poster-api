@@ -18,7 +18,7 @@ COL_OFFSET_MATERIAL_ID = 3
 COL_OFFSET_GROUPS_NAME = 4
 COL_OFFSET_TASK_STATUS = 5
 FIRST_ROW = 3
-LAST_ROW = 11
+LAST_ROW = 7
 
 SCOPE = [
     "https://spreadsheets.google.com/feeds",

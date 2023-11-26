@@ -18,7 +18,7 @@ credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 COLS_PER_DAY = 5
 COL_OFFSET_TASK_STATUS = 5
 FIRST_ROW = 3
-LAST_ROW = 9
+LAST_ROW = 7
 
 
 def reset_task_status():
