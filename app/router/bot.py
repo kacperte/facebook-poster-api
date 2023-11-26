@@ -38,10 +38,10 @@ class ContentRequest(BaseModel):
 def send_content_to_fb_groups(
     db: Session = Depends(get_db), content_request: ContentRequest = None
 ):
-    with open('/tmp/adres-ip', 'r') as file:
+    with open("/tmp/adres-ip", "r") as file:
         ip = file.read().strip()
 
-    URL = f'http://{ip}/'
+    URL = f"http://{ip}/"
     try:
         # Send a request to the token endpoint to authenticate the user
         response_token = requests.post(

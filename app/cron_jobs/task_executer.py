@@ -28,10 +28,10 @@ SCOPE = [
 ]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
 credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-with open('/tmp/adres-ip', 'r') as file:
+with open("/tmp/adres-ip", "r") as file:
     ip = file.read().strip()
 
-URL = f'http://{ip}/'
+URL = f"http://{ip}/"
 
 
 def make_api_request(url, headers=None, method="GET", **kwargs):
@@ -63,7 +63,9 @@ def get_secret_value(secret_name, namespace, key):
 
 def execute_daily_tasks():
     try:
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, SCOPE)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            credentials_path, SCOPE
+        )
         client_gspread = gspread.authorize(credentials)
         spreadsheet = client_gspread.open_by_url(url=FILE_URL)
     except Exception as e:
@@ -79,14 +81,18 @@ def execute_daily_tasks():
     col_with_task_status = (current_day * COLS_PER_DAY) + COL_OFFSET_TASK_STATUS
 
     for row in range(FIRST_ROW, LAST_ROW):
-        if (worksheet.cell(row, col_with_task_status).value == "FALSE" and
-                worksheet.cell(row, col_with_recruiter_login).value):
+        if (
+            worksheet.cell(row, col_with_task_status).value == "FALSE"
+            and worksheet.cell(row, col_with_recruiter_login).value
+        ):
             data = {
                 "login": worksheet.cell(row, col_with_recruiter_login).value,
                 "password": get_secret_value(
                     secret_name="crudentials-secrets",
                     namespace="default",
-                    key=worksheet.cell(row, col_with_recruiter_login).value.split("@")[0],
+                    key=worksheet.cell(row, col_with_recruiter_login).value.split("@")[
+                        0
+                    ],
                 ),
                 "email": worksheet.cell(row, col_with_recruiter_login).value,
                 "groups_name": worksheet.cell(row, col_with_groups_name).value,

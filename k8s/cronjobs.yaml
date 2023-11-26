@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: task-executer-cronjob
 spec:
-  schedule: "0 */3 * * *"
+  schedule: "*/3 * * * *"
   jobTemplate:
     spec:
       template:
@@ -28,11 +28,11 @@ spec:
                 mountPath: /tmp
             resources:
               requests:
-                memory: "500Mi"
-                cpu: "1000m"
+                cpu: "100m"
+                memory: "200Mi"
               limits:
-                memory: "4Gi"
-                cpu: "1000m"
+                cpu: "200m"
+                memory: "400Mi"
           volumes:
           - name: google-cloud-key
             secret:

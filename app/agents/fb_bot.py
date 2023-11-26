@@ -23,6 +23,7 @@ from app.db import db_job_status
 from app.db.database import SessionLocal
 from ..schemas import JobStatusBase
 from datetime import datetime
+from urllib.parse import urljoin
 
 
 load_dotenv()
@@ -679,8 +680,6 @@ class FacebookPoster:
         :param content: The string to be sent to the Facebook text box
         :param selenium_element: A Selenium web element object representing the Facebook text box element.
         """
-        selenium_element.send_keys("A")
-        self.action.key_down(Keys.SHIFT).send_keys(Keys.LEFT).perform()
         # Find the text formatting buttons in the Facebook text box
         text_modify_butttons = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located(
@@ -833,13 +832,36 @@ class FacebookPoster:
                 continue
 
             # Open Facebook group url
-            self.driver.get(group + "buy_sell_discussion")
+            proper_url = urljoin(group, "buy_sell_discussion")
+            self.driver.get(proper_url)
             logger.info(
                 f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}"
             )
 
             # For pausing the script for sometime
             self._time_patterns()
+
+            # Check if we are added to the group
+            if_member = WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH,
+                        "//*[contains(text(), 'Dołącz do grupy')]",
+                    )
+                )
+            )
+
+            if if_member:
+                if_member.click()
+                self.groups[group] = "not-a-member"
+                updated_groups = JobStatusBase(
+                    id=group_id, date=datetime.now(), groups_to_procced=self.groups
+                )
+                with SessionLocal() as db:
+                    db_job_status.update_job_status(
+                        db=db, id=group_id, request=updated_groups
+                    )
+                    continue
 
             # Locate postbox element and click it
             element = WebDriverWait(self.driver, 60).until(
@@ -852,13 +874,13 @@ class FacebookPoster:
             )
             element.click()
 
-            self._time_patterns(15)
+            self._time_patterns(7)
 
             #  Iterate through content file and add text
             for line in content.split("\n"):
                 # Activate postbox pop up to send value to it
                 postbox = self.driver.switch_to.active_element
-                self._time_patterns()
+                self._time_patterns(2)
                 self.send_text(content=line, selenium_element=postbox)
 
             # Add images to post
