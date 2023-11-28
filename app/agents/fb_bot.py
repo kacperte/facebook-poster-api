@@ -372,7 +372,7 @@ class FacebookPoster:
             )
             cookie.click()
         except Exception as e:
-            logger.error(e)
+            logger.error("Not cookie button to click")
 
         # For pausing the script for some time
         self._time_patterns()
@@ -681,6 +681,9 @@ class FacebookPoster:
         :param selenium_element: A Selenium web element object representing the Facebook text box element.
         """
         # Find the text formatting buttons in the Facebook text box
+        selenium_element.send_keys("A")
+        self.action.key_down(Keys.SHIFT).send_keys(Keys.LEFT).perform()
+
         text_modify_butttons = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, "//span[@class='x12mruv9 xfs2ol5 x1gslohp x12nagc']")
@@ -688,6 +691,7 @@ class FacebookPoster:
         )
         selenium_element.send_keys(Keys.BACKSPACE)
         self.action.reset_actions()
+
         # Initialize empty lists to store text formatting actions for text without bold and italic formatting,
         # and text with only bold and italic formatting
         list_of_action_to_do_with_text_without_bold_and_italic = list()
@@ -733,12 +737,14 @@ class FacebookPoster:
 
             # Send the `content_without_tags` to the Facebook text box
             selenium_element.send_keys(content_without_tags)
+
             # Press and hold Shift then press left by n times (after this, we reset action chain)
             self.action.key_down(Keys.SHIFT).send_keys(Keys.LEFT * n).perform()
             self.action.reset_actions()
 
             # For pausing the script for some time
             self._time_patterns(2)
+
             # Iterate through actions in `list_of_actions_without_bold_and_italic` and click the corresponding button
             # to trigger the action
             for action in list_of_action_to_do_with_text_without_bold_and_italic:
@@ -833,39 +839,50 @@ class FacebookPoster:
                     continue
 
                 # Open Facebook group url
-                proper_url = urljoin(group, "buy_sell_discussion")
+                if not group.endswith("/"):
+                    proper_group_url = group + "/"
+                    proper_url = urljoin(proper_group_url, "buy_sell_discussion")
+                else:
+                    proper_url = urljoin(group, "buy_sell_discussion")
+
                 self.driver.get(proper_url)
                 logger.info(
-                    f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')}"
+                    f"/// Start processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')} "
+                    f"{counter + 1}/{len(self.groups.keys())}"
                 )
 
                 # For pausing the script for sometime
                 self._time_patterns()
 
-                # Check if we are added to the group
-                if_member = WebDriverWait(self.driver, 30).until(
-                    EC.presence_of_element_located(
-                        (
-                            By.XPATH,
-                            "//*[contains(text(), 'Dołącz do grupy')]",
+                try:
+                    # Check if we are added to the group
+                    if_member = WebDriverWait(self.driver, 30).until(
+                        EC.presence_of_element_located(
+                            (
+                                By.XPATH,
+                                "//*[contains(text(), 'Dołącz do grupy')]",
+                            )
                         )
                     )
-                )
 
-                # If we not a member, click to join a group and skip to next group
-                if if_member:
-                    if_member.click()
+                    # If we not a member, click to join a group and skip to next group
+                    if if_member:
+                        if_member.click()
 
-                    self.groups[group] = "not-a-member"
-                    updated_groups = JobStatusBase(
-                        id=group_id, date=datetime.now(), groups_to_procced=self.groups
-                    )
-
-                    with SessionLocal() as db:
-                        db_job_status.update_job_status(
-                            db=db, id=group_id, request=updated_groups
+                        self.groups[group] = "not-a-member"
+                        updated_groups = JobStatusBase(
+                            id=group_id,
+                            date=datetime.now(),
+                            groups_to_procced=self.groups,
                         )
-                        continue
+
+                        with SessionLocal() as db:
+                            db_job_status.update_job_status(
+                                db=db, id=group_id, request=updated_groups
+                            )
+                            continue
+                except Exception as e:
+                    logger.info(f"You a a member of this group")
 
                 # Locate postbox element and click it
                 element = WebDriverWait(self.driver, 60).until(
@@ -897,7 +914,9 @@ class FacebookPoster:
                 self._time_patterns(2)
 
                 # Click post button
-                self.driver.find_element(By.XPATH, "//div[@aria-label='Opublikuj']").click()
+                self.driver.find_element(
+                    By.XPATH, "//div[@aria-label='Opublikuj']"
+                ).click()
 
                 # For pausing the script for sometime
                 self._time_patterns(10)
@@ -913,7 +932,7 @@ class FacebookPoster:
 
                 logger.info(
                     f"/// End processing group: {group + 'buy_sell_discussion'} {time.strftime('%H:%M:%S')} "
-                    f"{counter}/{len(self.groups.keys())}"
+                    f"{counter + 1}/{len(self.groups.keys())}"
                 )
             except Exception as e:
                 logger.error(e)

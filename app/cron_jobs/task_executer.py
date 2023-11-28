@@ -79,6 +79,9 @@ def execute_daily_tasks():
     col_with_material_id = (current_day * COLS_PER_DAY) + COL_OFFSET_MATERIAL_ID
     col_with_groups_name = (current_day * COLS_PER_DAY) + COL_OFFSET_GROUPS_NAME
     col_with_task_status = (current_day * COLS_PER_DAY) + COL_OFFSET_TASK_STATUS
+    logger.info(
+        f"current_day: {current_day}, col_with_recruiter_login: {col_with_recruiter_login}, col_with_material_id: {col_with_material_id}, col_with_groups_name: {col_with_groups_name}, col_with_task_status: {col_with_task_status}"
+    )
 
     for row in range(FIRST_ROW, LAST_ROW):
         if (

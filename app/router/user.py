@@ -26,7 +26,6 @@ def add_new_user_to_secret(login, password):
         )
 
         v1.replace_namespaced_secret("crudentials-secrets", "default", secret)
-        print("!!!")
     except client.ApiException as e:
         print(f"Nie udało się dodać użytkownika do Secret: {e}")
 

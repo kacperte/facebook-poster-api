@@ -6,6 +6,9 @@ from app.db.database import SessionLocal
 
 
 app = Celery("queue", broker="amqp://user:password@rabbitmq-service:5672")
+app.conf.update(
+    worker_log_level='WARNING'
+)
 
 logger = logging.getLogger(__name__)
 
