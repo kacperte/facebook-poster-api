@@ -372,7 +372,7 @@ class FacebookPoster:
             )
             cookie.click()
         except Exception as e:
-            logger.error("Not cookie button to click")
+            logger.error("No cookie button to click")
 
         # For pausing the script for some time
         self._time_patterns()
@@ -869,6 +869,8 @@ class FacebookPoster:
                     if if_member:
                         if_member.click()
 
+                        logger.info(f"You are not a member of this group. Proceed to join the group.")
+
                         self.groups[group] = "not-a-member"
                         updated_groups = JobStatusBase(
                             id=group_id,
@@ -882,7 +884,7 @@ class FacebookPoster:
                             )
                             continue
                 except Exception as e:
-                    logger.info(f"You a a member of this group")
+                    logger.info(f"You are a member of this group")
 
                 # Locate postbox element and click it
                 element = WebDriverWait(self.driver, 60).until(
@@ -935,7 +937,7 @@ class FacebookPoster:
                     f"{counter + 1}/{len(self.groups.keys())}"
                 )
             except Exception as e:
-                logger.error(e)
+                logger.error(f"Problem with {group} / Error {e}")
 
                 self.groups[group] = "crashed"
                 updated_groups = JobStatusBase(

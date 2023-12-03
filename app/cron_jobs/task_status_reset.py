@@ -18,7 +18,7 @@ credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 COLS_PER_DAY = 5
 COL_OFFSET_TASK_STATUS = 5
 FIRST_ROW = 3
-LAST_ROW = 7
+LAST_ROW = 9
 
 
 def reset_task_status():
@@ -40,9 +40,10 @@ def reset_task_status():
     col_with_task_status = (current_day * COLS_PER_DAY) + COL_OFFSET_TASK_STATUS
 
     cells_to_update = []
+
     for row in range(FIRST_ROW, LAST_ROW):
         cell = worksheet.cell(row=row, col=col_with_task_status)
-        cell.value = "FALSE"
+        cell.value = False
         cells_to_update.append(cell)
 
     try:

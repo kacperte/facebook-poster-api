@@ -7,6 +7,7 @@ def create_logger(name: str, level=logging.INFO, tag="fb-poster") -> logging.Log
     formatter = logging.Formatter(
         "%(asctime)s [%(tag)s] %(name)s %(levelname)s: %(message)s"
     )
+    logger.propagate = False
 
     # Tworzenie niestandardowego filtra dodającego tag do logów
     class ContextFilter(logging.Filter):
