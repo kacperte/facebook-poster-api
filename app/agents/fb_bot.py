@@ -832,6 +832,10 @@ class FacebookPoster:
         counter = 0
         number = randint(3, 5)
 
+        # Log info about process
+        current_time = time.localtime()
+        st_time = time.time()
+        logger.info(f"Recruiter: {self.login}\nProcess start at: {time.strftime('%Y-%m-%d %H:%M:%S', current_time)}")
         for group in self.groups.keys():
             try:
                 # Skip the group if it was processed in a previous process
@@ -955,4 +959,12 @@ class FacebookPoster:
 
             counter += 1
 
+        # Log info about process
+        end_time = time.time()
+        execution_time = end_time - st_time
+        current_time = time.localtime()
+        logger.info(f"Process end at: {time.strftime('%Y-%m-%d %H:%M:%S', current_time)}\nProcess took: {execution_time / 60} minutes")
+
+        logger.info(
+            f"Recruiter: {self.login}\nProcess start at: {time.strftime('%Y-%m-%d %H:%M:%S', current_time)}")
         self.driver.quit()

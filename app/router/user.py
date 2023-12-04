@@ -39,7 +39,7 @@ def add_new_user_to_secret(login, password):
 async def create_user(
     request: UserBase,
     db: Session = Depends(get_db),
-    # current_user: UserBase = Depends(get_current_user),
+    current_user: UserBase = Depends(get_current_user),
 ):
     if db_user.check_duplicate(db, request.username):
         raise HTTPException(status_code=409, detail="Username already in database")
