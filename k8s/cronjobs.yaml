@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: task-executer-cronjob
 spec:
-  schedule: "*/4 * * * *"
+  schedule: "0 */4 * * *"
   jobTemplate:
     spec:
       template:
@@ -72,3 +72,33 @@ spec:
           - name: google-cloud-key
             secret:
               secretName: iam-storage
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-status-cronjob
+spec:
+  schedule: "50 23 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: daily-status
+            image: gcr.io/neon-semiotics-405717/cron-daily_status:latest
+            env:
+              - name: TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: discord-secrets
+                    key: TOKEN
+            resources:
+              requests:
+                cpu: "100m"
+                memory: "200Mi"
+              limits:
+                cpu: "200m"
+                memory: "400Mi"
+
+
